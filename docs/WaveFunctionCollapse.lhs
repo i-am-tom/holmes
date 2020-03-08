@@ -149,7 +149,7 @@ test:docs`, and then enter something like the following:
 ```
 > import WaveFunctionCollapse
 > example <- maps
-> printMap example
+> mapM_ printMap example
 ```
 
 If all goes to plan, you should see something like this!
