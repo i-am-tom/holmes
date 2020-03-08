@@ -26,7 +26,7 @@ class SumR x => FractionalR (x :: Type) where
 -- | A three-way division relationships implemented as a flipped multiplication
 -- relationship.
 divideR :: FractionalR x => ( x, x, x ) -> ( x, x, x )
-divideR ( x, y, z ) = let ( x', y', z' ) = multiplyR ( z, y, x ) in ( x', y', z' )
+divideR ( x, y, z ) = let ( z', y', x' ) = multiplyR ( z, y, x ) in ( x', y', z' )
 
 -- | A two-way relationship between a value and its reciprocal, implemented
 -- with a multiplication relationship in which the third value is fixed to be
