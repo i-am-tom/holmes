@@ -12,7 +12,6 @@ maintainer:          tomjharding@live.co.uk
 -- copyright:
 -- category:
 build-type:          Simple
-extra-source-files:  CHANGELOG.md
 
 library
   exposed-modules: Control.Monad.Cell.Class
