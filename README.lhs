@@ -442,6 +442,34 @@ solution
 ```
 -->
 
+## 🚂 Exploring the code
+
+If you're new to the **code** and want to get a feel for how the library works:
+
+- The best place to start is probably in `Data/JoinSemilattice/Class/*`
+  (we can ignore `Merge` until the next step). These will give you an idea of
+  how we represent **relationships** (as opposed to **functions**) in `Holmes`.
+
+- After that, `Control/Monad/Cell/Class.hs` gives an overview of the
+  primitives for building a propagator network. In particular, see `unary` and
+  `binary` for an idea of how we lift our **relationships** into a network.
+  Here's where `src/Data/JoinSemilattice/Class/Merge` gets used, too, so the
+  `write` primitive should give you an idea of why it's useful.
+
+- `src/Data/Propagator.hs` introduces the high-level user-facing abstraction
+  for stating constraints. Most of these functions are just wrapped calls to
+  the aforementioned `unary` or `binary`, and really just add some syntactic
+  sugar.
+
+- Finally, `Control/Monad/MoriarT.hs` is a full implementation of the interface
+  including support for **provenance** and **backtracking**. It also uses the
+  functions in `Data/CDCL.hs` to optimise the parameter search. This is the
+  base transformer on top of which we build `Control/Monad/Holmes.hs` _and_
+  `Control/Monad/Watson.hs`.
+
+Thus concludes our **whistle-stop tour** of my favourite sights in the
+repository!
+
 ## ☎️ Questions?
 
 If anything isn't clear, feel free to open an issue, or just message [me on
