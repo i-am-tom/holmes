@@ -372,7 +372,7 @@ For many problems, however, we can get to results faster — or produce more
 desirable results — by applying some **randomness** to this order. This is
 especially useful in problems such as **procedural generation**, where
 randomness tends to lead to more **natural**-seeming outputs. See the
-procedural generation example for more details!
+`WaveFunctionCollapse` example for more details!
 
 ### ♻️ Running functions forwards _and_ backwards
 

@@ -11,10 +11,9 @@ License     : MIT
 -}
 module Data.JoinSemilattice.Class.FlatMapping where
 
-import Data.Function ((&))
 import Data.JoinSemilattice.Class.Zipping (Zipping)
 import Data.JoinSemilattice.Defined (Defined (..))
-import Data.JoinSemilattice.Intersect (Intersect (..), Intersectable, union)
+import Data.JoinSemilattice.Intersect (Intersect (..), Intersectable)
 import Data.Kind (Constraint, Type)
 import Prelude hiding (unzip)
 

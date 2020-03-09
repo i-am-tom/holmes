@@ -21,7 +21,6 @@ library
                  , Data.JoinSemilattice.Defined
                  , Data.JoinSemilattice.Intersect
                  , Data.Propagator
-
                  , Data.Holmes
 
   other-modules: Control.Monad.MoriarT
@@ -38,24 +37,27 @@ library
                , Data.JoinSemilattice.Class.Zipping
                , Data.CDCL
 
-  -- extensions:
-  build-depends:       base >=4.13 && < 4.14
-                     , data-reify >= 0.6
-                     , hashable >= 1.3 && < 1.4
-                     , hedgehog >= 1.0 && < 1.1
-                     , logict >= 0.7 && < 0.8
-                     , mtl >= 2.2 && < 2.3
-                     , primitive >= 0.7 && < 0.8
-                     , split >= 0.2 && < 0.3
-                     , transformers >= 0.5 && < 0.6
-                     , unordered-containers >= 0.2 && < 0.3
+  build-depends: base >=4.13 && < 4.14
+               , data-reify >= 0.6
+               , hashable >= 1.3 && < 1.4
+               , hedgehog >= 1.0 && < 1.1
+               , logict >= 0.7 && < 0.8
+               , mtl >= 2.2 && < 2.3
+               , primitive >= 0.7 && < 0.8
+               , split >= 0.2 && < 0.3
+               , transformers >= 0.5 && < 0.6
+               , unordered-containers >= 0.2 && < 0.3
 
-  hs-source-dirs:      src
-  default-language:    Haskell2010
+  ghc-options: -Wall -Wextra -threaded
+  hs-source-dirs: src
+  default-language: Haskell2010
 
-test-suite docs
+--------------------------------------------------
+-- EXAMPLE PROJECTS
+
+test-suite examples
   type:     exitcode-stdio-1.0
-  main-is:  Main.lhs
+  main-is:  Main.hs
 
   build-depends: base
                , hashable >= 1.3 && < 1.4
@@ -63,18 +65,20 @@ test-suite docs
                , hspec >= 2.7 && < 2.8
                , split >= 0.2 && < 0.3
                , unordered-containers >= 0.2 && < 0.3
+               , relude >= 0.6 && < 0.7
+               , tasty >= 1.2 && < 1.3
+               , tasty-discover
+               , tasty-hspec
 
   other-modules: Futoshiki
-               , Parameters
-               , Practices
-               , Predicates
-               , Programs
                , WaveFunctionCollapse
 
-  ghc-options: -pgmL markdown-unlit -Wall -Wextra -threaded
-  hs-source-dirs: docs
-  build-tool-depends: markdown-unlit:markdown-unlit
+  ghc-options: -Wall -Wextra -threaded
+  hs-source-dirs: examples
   default-language: Haskell2010
+
+--------------------------------------------------
+-- UNIT TESTS
 
 test-suite test
   type:     exitcode-stdio-1.0
@@ -92,7 +96,7 @@ test-suite test
                , tasty-hedgehog
                , tasty-hspec
 
-  ghc-options: -pgmL markdown-unlit -Wall -Wextra -threaded
+  ghc-options: -Wall -Wextra -threaded
   hs-source-dirs: test
   build-tool-depends: markdown-unlit:markdown-unlit
   default-language: Haskell2010
