@@ -3,9 +3,7 @@
 {-# LANGUAGE ViewPatterns #-}
 module Test.Data.JoinSemilattice.Defined where
 
-import Control.Applicative (liftA2)
-import Data.Holmes (AbsR (..), BooleanR (..), EqR (..), neR, OrdR (..), gteR, gtR, lteR, ltR, SumR (..), negateR, subR)
-import Data.JoinSemilattice.Defined (Defined (..))
+import Data.Holmes
 import Hedgehog
 import qualified Hedgehog.Gen as Gen
 import qualified Hedgehog.Range as Range
@@ -13,15 +11,27 @@ import qualified Test.Data.Input.Config as Input
 import qualified Test.Data.JoinSemilattice.Class.Abs as AbsR
 import qualified Test.Data.JoinSemilattice.Class.Boolean as BooleanR
 import qualified Test.Data.JoinSemilattice.Class.Eq as EqR
+import qualified Test.Data.JoinSemilattice.Class.Fractional as FractionalR
+import qualified Test.Data.JoinSemilattice.Class.Integral as IntegralR
 import qualified Test.Data.JoinSemilattice.Class.Ord as OrdR
 import qualified Test.Data.JoinSemilattice.Class.Sum as SumR
 import Test.Tasty.Hspec (Spec, it, shouldBe)
 import qualified Test.Util.Laws as Laws
 
+defined_double :: Gen (Defined Double)
+defined_double = do
+  content <- Gen.double (Range.linearFrac 1 100)
+  Gen.element [ Unknown, Exactly content, Conflict ]
+
 defined_int :: Gen (Defined Int)
 defined_int = do
-  content <- Gen.int (Range.linear 0 100)
+  content <- Gen.int (Range.linear 1 100)
   Gen.element [ Unknown, Exactly content, Conflict ]
+
+defined_int_unconflicted :: Gen (Defined Int)
+defined_int_unconflicted = do
+  content <- Gen.int (Range.linear 1 100)
+  Gen.element [ Unknown, Exactly content ]
 
 hprop_from_fill :: Property
 hprop_from_fill = Input.from_fill @(Defined Int)
@@ -70,14 +80,20 @@ hprop_booleanR_andR_simple = property do
 hprop_booleanR_andR :: Property
 hprop_booleanR_andR = BooleanR.booleanR_andR @(Defined Bool)
 
+hprop_booleanR_deMorgan_and :: Property
+hprop_booleanR_deMorgan_and = BooleanR.booleanR_deMorgan_and @(Defined Bool)
+
+hprop_booleanR_deMorgan_or :: Property
+hprop_booleanR_deMorgan_or = BooleanR.booleanR_deMorgan_or @(Defined Bool)
+
 hprop_booleanR_notR :: Property
 hprop_booleanR_notR = BooleanR.booleanR_notR @(Defined Bool)
 
 hprop_booleanR_orR :: Property
 hprop_booleanR_orR = BooleanR.booleanR_orR @(Defined Bool)
 
-hprop_eqR_eqR_simple :: Property
-hprop_eqR_eqR_simple = property do
+hprop_eqR_simple :: Property
+hprop_eqR_simple = property do
   (Exactly -> x) <- forAll (Gen.int (Range.linear 0 20))
   (Exactly -> y) <- forAll (Gen.int (Range.linear 0 20))
 
@@ -87,50 +103,20 @@ hprop_eqR_eqR_simple = property do
 hprop_eqR_eqR :: Property
 hprop_eqR_eqR = EqR.eqR_eqR defined_int
 
-hprop_eqR_lifted :: Property
-hprop_eqR_lifted = property do
-  x <- forAll defined_int
-  y <- forAll defined_int
-
-  let ( _, _, z ) = eqR ( x, y, mempty )
-  z === liftA2 (==) x y
-
 hprop_eqR_reflexivity :: Property
-hprop_eqR_reflexivity = property do
-  x <- forAll defined_int
-
-  let ( _, _, c ) = eqR ( x, x, mempty )
-  assert (x == Conflict || c <> trueR == trueR)
+hprop_eqR_reflexivity = EqR.eqR_reflexivity defined_int_unconflicted
 
 hprop_eqR_symmetry :: Property
 hprop_eqR_symmetry = EqR.eqR_symmetry defined_int
 
-hprop_eqR_neR :: Property
-hprop_eqR_neR = EqR.eqR_neR defined_int
+hprop_eqR_negation :: Property
+hprop_eqR_negation = EqR.eqR_negation defined_int
 
-hprop_eqR_neR_simple :: Property
-hprop_eqR_neR_simple = property do
-  (Exactly -> x) <- forAll (Gen.int (Range.linear 0 20))
-  (Exactly -> y) <- forAll (Gen.int (Range.linear 0 20))
+hprop_fractionalR_mulR :: Property
+hprop_fractionalR_mulR = FractionalR.fractionalR_multiplyR defined_double
 
-  let ( _, _, z ) = neR ( x, y, mempty )
-  z === Exactly (x /= y)
-
-hprop_ordR_gteR_simple :: Property
-hprop_ordR_gteR_simple = property do
-  (Exactly -> x) <- forAll (Gen.int (Range.linear 0 20))
-  (Exactly -> y) <- forAll (Gen.int (Range.linear 0 20))
-
-  let ( _, _, z ) = gteR ( x, y, mempty )
-  z === Exactly (x >= y)
-
-hprop_ordR_gtR_simple :: Property
-hprop_ordR_gtR_simple = property do
-  (Exactly -> x) <- forAll (Gen.int (Range.linear 0 20))
-  (Exactly -> y) <- forAll (Gen.int (Range.linear 0 20))
-
-  let ( _, _, z ) = gtR ( x, y, mempty )
-  z === Exactly (x > y)
+hprop_integralR_divMod :: Property
+hprop_integralR_divMod = IntegralR.integralR_divModR defined_int
 
 hprop_ordR_lteR :: Property
 hprop_ordR_lteR = OrdR.ordR_lteR defined_int
@@ -142,14 +128,6 @@ hprop_ordR_lteR_simple = property do
 
   let ( _, _, z ) = lteR ( x, y, mempty )
   z === Exactly (x <= y)
-
-hprop_ordR_ltR_simple :: Property
-hprop_ordR_ltR_simple = property do
-  (Exactly -> x) <- forAll (Gen.int (Range.linear 0 20))
-  (Exactly -> y) <- forAll (Gen.int (Range.linear 0 20))
-
-  let ( _, _, z ) = ltR ( x, y, mempty )
-  z === Exactly (x < y)
 
 hprop_ordR_symmetry :: Property
 hprop_ordR_symmetry = OrdR.ordR_symmetry defined_int

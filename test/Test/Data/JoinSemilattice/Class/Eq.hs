@@ -24,8 +24,8 @@ eqR_eqR gen = property do
   annotateShow b'
   b' <> b === b
 
-eqR_neR :: (EqR x b, Show b, Eq b, Eq x, Show x) => Gen x -> Property
-eqR_neR gen = property do
+eqR_negation :: (EqR x b, Show b, Eq b, Eq x, Show x) => Gen x -> Property
+eqR_negation gen = property do
   a <- forAll gen
   b <- forAll gen
 
@@ -37,6 +37,13 @@ eqR_neR gen = property do
 
   let ( _, c' ) = notR ( c, mempty )
   c' === d
+
+eqR_reflexivity :: (EqR x b, Show b, Eq b, Show x) => Gen x -> Property
+eqR_reflexivity gen = property do
+  a <- forAll gen
+
+  let ( _, _, c ) = eqR ( a, a, mempty )
+  c <> trueR === trueR
 
 eqR_symmetry :: (EqR x b, Eq b, Show b, Show x) => Gen x -> Property
 eqR_symmetry gen = property do

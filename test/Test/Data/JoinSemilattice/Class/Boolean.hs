@@ -28,6 +28,32 @@ booleanR_andR = property do
   annotateShow b'
   b' <> b === b
 
+booleanR_deMorgan_and :: forall x. (BooleanR x, Eq x, Show x) => Property
+booleanR_deMorgan_and = property do
+  (a :: x) <- forAll bool
+  (b :: x) <- forAll bool
+
+  let ( _, _, c ) = andR ( a, b, mempty )
+      ( _, a' ) = notR ( a, mempty )
+      ( _, b' ) = notR ( b, mempty )
+      ( _, _, d' ) = orR ( a', b', mempty )
+      ( _, d ) = notR ( d', mempty )
+
+  c === d
+
+booleanR_deMorgan_or :: forall x. (BooleanR x, Eq x, Show x) => Property
+booleanR_deMorgan_or = property do
+  (a :: x) <- forAll bool
+  (b :: x) <- forAll bool
+
+  let ( _, _, c ) = orR ( a, b, mempty )
+      ( _, a' ) = notR ( a, mempty )
+      ( _, b' ) = notR ( b, mempty )
+      ( _, _, d' ) = andR ( a', b', mempty )
+      ( _, d ) = notR ( d', mempty )
+
+  c === d
+
 booleanR_orR :: forall x. (BooleanR x, Eq x, Show x) => Property
 booleanR_orR = property do
   (a :: x) <- forAll bool
