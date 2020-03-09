@@ -444,7 +444,8 @@ solution
 
 ## 🚂 Exploring the code
 
-If you're new to the **code** and want to get a feel for how the library works:
+Now we've covered the **what**, maybe you're interested in the **how**! If
+you're new to the **code** and want to get a feel for how the library works:
 
 - The best place to start is probably in `Data/JoinSemilattice/Class/*`
   (we can ignore `Merge` until the next step). These will give you an idea of
@@ -477,3 +478,23 @@ Twitter](https://twitter.com/am_i_tom); it's where you'll most likely get a
 reply! I want this project to be an accessible way to approach the fields of
 **propagators**, **constraint-solving**, and **CDCL**. If there's anything I
 can do to improve this repository towards that goal, please **let me know**!
+
+## 💐 Acknowledgements
+
+- [Edward Kmett](https://twitter.com/kmett), whose
+  [propagators repository](https://github.com/ekmett/propagators)\* gave us the
+  `Prop` abstraction. I spent several months looking for alternative ways to
+  represent computations, and never came close to something as neat.
+
+- [Marco Sampellegrini](https://twitter.com/_alpacaaa), [Alex
+  Peitsinis](https://twitter.com/alexpeits), [Irene
+  Papakonstantinou](https://twitter.com/futumorphism), and plenty others who
+  have helped me figure out how to present this library in a
+  maximally-accessible way.
+
+\* _This repository also approaches propagator network computations using Andy
+Gill's [observable sharing](http://hackage.haskell.org/package/data-reify)
+methods, which may be of interest! Neither `Holmes` nor `Watson` implement
+this, as it requires some small breaks to purity and referential transparency,
+of which users must be aware. We sacrifice some performance gains for ease of
+use._
