@@ -352,7 +352,7 @@ thus is a much purer soul.
 Users can import `Control.Monad.Watson` and use the equivalent `satisfying` and
 `whenever` functions to return results _without_ the `IO` wrapper, thus making
 these computations **observably pure**! For most computations — certainly those
-outlined in this README — Watson is more than capable of deducing results.
+outlined in this README — `Watson` is more than capable of deducing results.
 
 ### 🎲 Random restart with `shuffle`
 
