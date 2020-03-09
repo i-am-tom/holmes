@@ -1,6 +1,11 @@
 # 🕵️‍♂️ Holmes
 
+**Holmes** is a library for computing **constraint-solving** problems. Under
+the hood, it uses **propagator networks** and **conflict-directed clause
+learning** to optimise the search over the parameter space.
+
 <!--
+
 ```haskell
 {-# OPTIONS_GHC -Wno-missing-methods -Wno-unused-top-binds #-}
 
@@ -15,11 +20,8 @@ import GHC.Generics (Generic)
 import Data.Hashable (Hashable)
 import Test.Hspec (describe, hspec, it, shouldBe)
 ```
--->
 
-**Holmes** is a library for computing **constraint-solving** problems. Under
-the hood, it uses **propagator networks** and **conflict-directed clause
-learning** to optimise the search over the parameter space.
+-->
 
 ## 👟 Example
 
@@ -408,6 +410,7 @@ celsius = backward celsius2fahrenheit 104.0 -- Just 40.0
 > are both computed by `Watson`, so the results are **pure**!_
 
 <!--
+
 ```haskell
 main :: IO ()
 main = hspec do
@@ -440,6 +443,7 @@ solution
     , 9, 4, 7,   3, 5, 1,   8, 2, 6
     ]
 ```
+
 -->
 
 ## 🚂 Exploring the code
