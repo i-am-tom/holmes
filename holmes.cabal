@@ -11,7 +11,7 @@ maintainer:         i.am.tom.harding@gmail.com
 name:               holmes
 description:        A reference library for constraint-solving with propagators and CDCL.
 synopsis:           Tools and combinators for solving constraint problems.
-version:            0.1.0.0
+version:            0.1.0.1
 
 library
   exposed-modules: Control.Monad.Cell.Class
