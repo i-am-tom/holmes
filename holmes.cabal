@@ -97,3 +97,17 @@ test-suite test
   hs-source-dirs: test
   build-tool-depends: markdown-unlit:markdown-unlit
   default-language: Haskell2010
+
+--------------------------------------------------
+-- LITERATE HASKELL README / HSPEC RUNNER
+
+test-suite readme
+  build-depends: base
+               , hashable >= 1.3 && < 1.4
+               , holmes
+               , hspec >= 2.7 && < 2.8
+  main-is:             README.lhs
+  type:                exitcode-stdio-1.0
+  default-language:    Haskell2010
+  ghc-options:         -pgmL markdown-unlit -Wall
+  build-tool-depends:  markdown-unlit:markdown-unlit

@@ -46,23 +46,23 @@ module Data.Holmes
 
   , Defined (..)
   , Intersect (..)
+  , using
 
   , Prop
 
   , (Prop..$), (Prop..>>=), Prop.zipWith'
-  , (Prop..%.), (Prop..*.), (Prop../.)
 
   , (Prop..&&), Prop.all', Prop.allWithIndex', Prop.and'
   , (Prop..||), Prop.any', Prop.anyWithIndex', Prop.or'
 
-  , Prop.distinct
   , Prop.not'
   , Prop.false, Prop.true
 
   , (Prop..*), (Prop../)
   , (Prop..+), (Prop..-)
   , (Prop..<), (Prop..<=), (Prop..>), (Prop..>=)
-  , (Prop..==), (Prop../=)
+  , (Prop..==), (Prop../=), Prop.distinct
+  , (Prop..%.), (Prop..*.), (Prop../.)
 
   , Prop.abs'
   , Prop.negate'
@@ -70,7 +70,8 @@ module Data.Holmes
   ) where
 
 import Control.Monad.Cell.Class (MonadCell)
-import Control.Monad.Holmes (Holmes, backward, forward, satisfying, shuffle, whenever)
+import Control.Monad.Holmes (Holmes, satisfying, shuffle, whenever)
+import Control.Monad.Watson (forward, backward)
 import Data.Input.Config (Config (..), Input (..), permute)
 import Data.JoinSemilattice.Class.Abs (AbsR (..))
 import Data.JoinSemilattice.Class.Boolean (BooleanR (..))
@@ -84,6 +85,6 @@ import Data.JoinSemilattice.Class.Ord (OrdR (..), ltR, gtR, gteR)
 import Data.JoinSemilattice.Class.Sum (SumR (..), negateR, subR)
 import Data.JoinSemilattice.Class.Zipping (Zipping (..))
 import Data.JoinSemilattice.Defined (Defined (..))
-import Data.JoinSemilattice.Intersect (Intersect (..))
+import Data.JoinSemilattice.Intersect (Intersect (..), using)
 import Data.Propagator (Prop)
 import qualified Data.Propagator as Prop
