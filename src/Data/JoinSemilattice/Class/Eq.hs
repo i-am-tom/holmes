@@ -21,16 +21,13 @@ import qualified Data.JoinSemilattice.Intersect as Intersect
 import Data.Kind (Type)
 
 -- | Equality between two variables as a relationship between them and their
--- result.
+-- result. The hope here is that, if we learn the output before the inputs, we
+-- can often "work backwards" to learn something about them. If we know the
+-- result is exactly /true/, for example, we can effectively then
+-- 'Control.Monad.Cell.Class.unify' the two input cells, as we know that their
+-- values will always be the same.
 class (BooleanR b, Merge x) => EqR (x :: Type) (b :: Type) | x -> b where
   eqR :: ( x, x, b ) -> ( x, x, b )
-
-instance Eq x => EqR (Defined x) (Defined Bool) where
-  eqR ( x, y, z )
-    = ( if z == trueR then y else mempty
-      , if z == trueR then x else mempty
-      , liftA2 (==) x y
-      )
 
 -- | A relationship between two variables and the result of a not-equals
 -- comparison between them.
@@ -41,6 +38,13 @@ neR ( x, y, z )
         ( _, z' ) = notR ( notZR, mempty )
 
     in ( x', y', z' )
+
+instance Eq x => EqR (Defined x) (Defined Bool) where
+  eqR ( x, y, z )
+    = ( if z == trueR then y else mempty
+      , if z == trueR then x else mempty
+      , liftA2 (==) x y
+      )
 
 instance (Bounded x, Enum x, Eq x, Hashable x)
     => EqR (Intersect x) (Intersect Bool) where

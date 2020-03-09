@@ -18,6 +18,10 @@ import Data.Kind (Type)
 
 -- | Unlike the 'abs' we know, which is a /function/ from a value to its
 -- absolute value, 'absR' is a /relationship/ between a value and its absolute.
+--
+-- For some types, while we can't truly reverse the `abs` function, we can say
+-- that there are two /possible/ inputs to consider, and so we can push /some/
+-- information in the reverse direction.
 class Merge x => AbsR (x :: Type) where
 
   -- | Given a value and its absolute, try to learn something in either

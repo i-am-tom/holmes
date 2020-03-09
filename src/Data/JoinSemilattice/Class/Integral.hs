@@ -21,14 +21,6 @@ import Data.Kind (Type)
 class SumR x => IntegralR (x :: Type) where
   divModR :: ( x, x, x, x ) -> ( x, x, x, x )
 
-  default divModR :: Integral x => ( x, x, x, x ) -> ( x, x, x, x )
-  divModR ( x, y, z, w )
-    = (  y * z + w
-      , (x - w) `div` z
-      , (x - w) `div` y
-      ,  x - (y * z)
-      )
-
 -- | Integral multiplication implemented as a 'divModR' relationship in which
 -- the remainder is fixed to be @0@.
 timesR :: (IntegralR x, Num x) => ( x, x, x ) -> ( x, x, x )
@@ -42,13 +34,19 @@ divR ( x, y, z ) = let ( x', y', z', _ ) = divModR ( x, y, z, mempty ) in ( x', 
 modR :: IntegralR x => ( x, x, x ) -> ( x, x, x )
 modR ( x, y, z ) = let ( x', y', _, z' ) = divModR ( x, y, mempty, z ) in ( x', y', z' )
 
-instance (Eq x, Integral x) => IntegralR (Defined x)
+instance (Eq x, Integral x) => IntegralR (Defined x) where
+  divModR ( x, y, z, w )
+    = (  y * z + w
+      , (x - w) `div` z
+      , (x - w) `div` y
+      ,  x - (y * z)
+      )
 
 instance (Bounded x, Enum x, Eq x, Hashable x, Integral x)
     => IntegralR (Intersect x) where
   divModR ( x, y, z, w )
-    = (  y * z + w
+    = ( y * z + w
       , Intersect.lift2 div (x - w) z
       , Intersect.lift2 div (x - w) y
-      ,  x - (y * z)
+      , x - (y * z)
       )
