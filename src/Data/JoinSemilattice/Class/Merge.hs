@@ -94,6 +94,17 @@ instance Semigroup x => Semigroup (Result x) where
 instance Semigroup x => Monoid (Result x) where
   mempty = Unchanged
 
+instance Applicative Result where
+  pure = Changed
+
+  Failure <*> _ = Failure
+  _ <*> Failure = Failure
+
+  Unchanged <*> _ = Unchanged
+  _ <*> Unchanged = Unchanged
+
+  Changed f <*> Changed x = Changed (f x)
+
 -- | Join semilattice '(<>)' specialised for propagator network needs. Allows
 -- types to implement the notion of "knowledge combination".
 class Monoid x => Merge (x :: Type) where
