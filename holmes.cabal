@@ -73,6 +73,7 @@ test-suite examples
 
   ghc-options: -Wall -Wextra -threaded
   hs-source-dirs: examples
+  build-tool-depends: tasty-discover:tasty-discover
   default-language: Haskell2010
 
 --------------------------------------------------
@@ -97,6 +98,7 @@ test-suite test
   ghc-options: -Wall -Wextra -threaded
   hs-source-dirs: test
   build-tool-depends: markdown-unlit:markdown-unlit
+                    , tasty-discover:tasty-discover
   default-language: Haskell2010
 
 --------------------------------------------------
