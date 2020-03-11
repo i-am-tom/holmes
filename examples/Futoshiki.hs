@@ -77,6 +77,7 @@ solution = do
 -- All being well, this should be the result! Use `cabal new-test examples` to
 -- run these tests and check for correct solutions.
 
+spec_futoshiki :: Spec
 spec_futoshiki
   = it "computes the solution" do
       solution `shouldBe` Just
