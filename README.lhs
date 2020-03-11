@@ -351,7 +351,7 @@ couple extra little surprises in there for the curious few:
 
 `Watson` knows `Holmes`' methods, and can apply them to compute results. Unlike
 `Holmes`, however, `Watson` is built on top of `ST` rather than `IO`, and is
-thus is a much purer soul.
+thus a much purer soul.
 
 Users can import `Control.Monad.Watson` and use the equivalent `satisfying` and
 `whenever` functions to return results _without_ the `IO` wrapper, thus making
