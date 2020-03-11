@@ -95,6 +95,20 @@ test-suite test
                , tasty-hedgehog
                , tasty-hspec
 
+  other-modules: Test.Control.Monad.Cell.Class
+               , Test.Data.Input.Config
+               , Test.Data.JoinSemilattice.Class.Abs
+               , Test.Data.JoinSemilattice.Class.Boolean
+               , Test.Data.JoinSemilattice.Class.Eq
+               , Test.Data.JoinSemilattice.Class.Fractional
+               , Test.Data.JoinSemilattice.Class.Integral
+               , Test.Data.JoinSemilattice.Class.Ord
+               , Test.Data.JoinSemilattice.Class.Sum
+               , Test.Data.JoinSemilattice.Defined
+               , Test.Data.JoinSemilattice.Intersect
+               , Test.Data.Propagator
+               , Test.Util.Laws
+
   ghc-options: -Wall -Wextra -threaded
   hs-source-dirs: test
   build-tool-depends: markdown-unlit:markdown-unlit
