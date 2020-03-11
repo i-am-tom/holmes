@@ -36,5 +36,5 @@ recipR ( x, y ) = let ( x', y', _ ) = multiplyR ( x, y, 1 ) in ( x', y' )
 
 instance (Eq x, Fractional x) => FractionalR (Defined x)
 
-instance (Bounded x, Enum x, Eq x, Fractional x, Hashable x)
+instance (Bounded x, Enum x, Ord x, Fractional x, Hashable x)
   => FractionalR (Intersect x)

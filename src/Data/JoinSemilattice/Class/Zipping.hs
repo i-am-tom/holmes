@@ -1,9 +1,6 @@
-{-# LANGUAGE BlockArguments #-}
 {-# LANGUAGE ConstraintKinds #-}
-{-# LANGUAGE DefaultSignatures #-}
 {-# LANGUAGE FunctionalDependencies #-}
 {-# LANGUAGE KindSignatures #-}
-{-# LANGUAGE ViewPatterns #-}
 
 {-|
 Module      : Data.JoinSemilattice.Class.Zipping
@@ -13,33 +10,44 @@ License     : MIT
 -}
 module Data.JoinSemilattice.Class.Zipping (Zipping (..)) where
 
-import Control.Applicative (liftA3)
-import Data.Function ((&))
+import Control.Applicative (liftA2)
 import Data.JoinSemilattice.Class.Mapping (Mapping)
 import Data.JoinSemilattice.Defined (Defined)
 import Data.JoinSemilattice.Intersect (Intersect, Intersectable)
 import qualified Data.JoinSemilattice.Intersect as Intersect
 import Data.Kind (Constraint, Type)
-import Prelude hiding (unzip3)
 
 -- | Lift a relationship between three values over some @f@ (usually a
 -- parameter type).
 class Mapping f c => Zipping (f :: Type -> Type) (c :: Type -> Constraint) | f -> c where
-  zipWithR :: (c x, c y, c z) => ((x, y, z) -> (x, y, z)) -> ((f x, f y, f z) -> (f x, f y, f z))
+  zipWithR
+    :: (c x, c y, c z)
+    => ( Maybe ((x, y) -> z)
+       , Maybe ((x, z) -> y)
+       , Maybe ((y, z) -> x)
+       )
+    -> ((f x, f y, f z) -> (f x, f y, f z))
 
-  default zipWithR :: Applicative f => ((x, y, z) -> (x, y, z)) -> ((f x, f y, f z) -> (f x, f y, f z))
-  zipWithR f (xs, ys, zs) = unzip3 (liftA3 (\x y z -> f (x, y, z)) xs ys zs)
+instance Zipping Defined Eq where
+  zipWithR (fs, gs, hs) (x, y, z)
+    = ( case hs of Just h  -> liftA2 (curry h) y z
+                   Nothing -> mempty
 
-instance Zipping Defined Eq
+      , case gs of Just g  -> liftA2 (curry g) x z
+                   Nothing -> mempty
+
+      , case fs of Just f  -> liftA2 (curry f) x y
+                   Nothing -> mempty
+      )
 
 instance Zipping Intersect Intersectable where
-  zipWithR f (Intersect.toList -> xs, Intersect.toList -> ys, Intersect.toList -> zs) = do
-    let ( xs', ys', zs' ) = unzip3 (liftA3 (\x y z -> f (x, y, z)) xs ys zs)
-    ( Intersect.fromList xs', Intersect.fromList ys', Intersect.fromList zs' )
+  zipWithR (fs, gs, hs) (x, y, z)
+    = ( case hs of Just h  -> Intersect.lift2 (curry h) y z
+                   Nothing -> mempty
 
-unzip3 :: Functor f => f (x, y, z) -> (f x, f y, f z)
-unzip3 xyz
-  = ( xyz & fmap \(x, _, _) -> x
-    , xyz & fmap \(_, y, _) -> y
-    , xyz & fmap \(_, _, z) -> z
-    )
+      , case gs of Just g  -> Intersect.lift2 (curry g) x z
+                   Nothing -> mempty
+
+      , case fs of Just f  -> Intersect.lift2 (curry f) x y
+                   Nothing -> mempty
+      )

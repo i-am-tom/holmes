@@ -46,7 +46,7 @@ instance Eq x => EqR (Defined x) (Defined Bool) where
       , liftA2 (==) x y
       )
 
-instance (Bounded x, Enum x, Eq x, Hashable x)
+instance (Bounded x, Enum x, Ord x, Hashable x)
     => EqR (Intersect x) (Intersect Bool) where
   eqR ( x, y, z )
     = ( if | z == trueR                           -> y

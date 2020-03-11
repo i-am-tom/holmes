@@ -1,4 +1,3 @@
-{-# LANGUAGE BlockArguments #-}
 {-# LANGUAGE ConstraintKinds #-}
 {-# LANGUAGE FunctionalDependencies #-}
 {-# LANGUAGE KindSignatures #-}
@@ -14,6 +13,7 @@ module Data.JoinSemilattice.Class.FlatMapping where
 import Data.JoinSemilattice.Class.Zipping (Zipping)
 import Data.JoinSemilattice.Defined (Defined (..))
 import Data.JoinSemilattice.Intersect (Intersect (..), Intersectable)
+import qualified Data.JoinSemilattice.Intersect as Intersect
 import Data.Kind (Constraint, Type)
 import Prelude hiding (unzip)
 
@@ -29,19 +29,25 @@ import Prelude hiding (unzip)
 -- implementing the reverse flow for 'Defined' or 'Intersect', and see what
 -- happens.
 class Zipping f c => FlatMapping (f :: Type -> Type) (c :: Type -> Constraint) | f -> c where
-  flatMapR :: (c x, c y) => ((x, f y) -> (x, f y)) -> ((f x, f y) -> (f x, f y))
+  flatMapR :: (c x, c y) => (Maybe (x -> f y), Maybe (f y -> x)) -> ((f x, f y) -> (f x, f y))
 
 instance FlatMapping Defined Eq where
-  flatMapR f ( xs, _ )
-    = ( mempty -- Unless you have 'Monoid x'
-      , case xs of Exactly x -> let ( _, ys' ) = f (x, mempty) in ys'
-                   _         -> mempty
+  flatMapR ( fs, gs ) ( xs, ys )
+    = ( case gs of Just g  -> Exactly (g ys)
+                   Nothing -> mempty
+
+      , case xs of
+          Unknown   -> Unknown
+          Conflict  -> Conflict
+          Exactly x -> case fs of Just f  -> f x
+                                  Nothing -> mempty
       )
 
 instance FlatMapping Intersect Intersectable where
-  flatMapR f ( Intersect xs, _ )
-    = ( mempty -- Unless you have 'Monoid x'
-        
-        -- Take the union of all generated 'Intersect' values.
-      , Intersect (foldMap (\x -> let (_, Intersect ys') = f (x, mempty) in ys') xs)
+  flatMapR ( fs, gs ) ( xs, ys )
+    = ( case gs of Just g  -> Intersect.map g (Intersect.powerSet ys)
+                   Nothing -> mempty
+
+      , case fs of Just f  -> foldr (Intersect.union . f) (Intersect mempty) xs
+                   Nothing -> mempty
       )

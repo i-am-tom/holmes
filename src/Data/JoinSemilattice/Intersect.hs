@@ -30,6 +30,8 @@ import qualified Data.HashSet as HashSet
 import Data.Hashable (Hashable)
 import Data.Input.Config (Config (..), Input (..))
 import Data.Kind (Type)
+import Data.Set (Set)
+import qualified Data.Set as Set
 import Prelude hiding (filter, map, unzip)
 
 -- | A set type with intersection as the '(<>)' operation.
@@ -38,10 +40,10 @@ newtype Intersect (x :: Type)
   deriving stock (Eq, Ord, Show, Foldable)
   deriving newtype (Hashable)
 
-class (Bounded content, Enum content, Eq content, Hashable content)
+class (Bounded content, Enum content, Ord content, Hashable content)
   => Intersectable content
 
-instance (Bounded content, Enum content, Eq content, Hashable content)
+instance (Bounded content, Enum content, Ord content, Hashable content)
   => Intersectable content
 
 instance (Eq content, Hashable content) => Semigroup (Intersect content) where
@@ -108,9 +110,16 @@ except = foldr delete mempty
 filter :: (x -> Bool) -> Intersect x -> Intersect x
 filter = coerce HashSet.filter
 
+-- | Convert a 'Set' to an 'Intersect'.
+fromSet :: (Eq x, Hashable x) => Set x -> Intersect x
+fromSet = Intersect . foldr HashSet.insert mempty
+
 -- | Map over an 'Intersect' with a given function.
 map :: (Eq y, Hashable y) => (x -> y) -> Intersect x -> Intersect y
 map = coerce HashSet.map
+
+powerSet :: (Bounded x, Enum x, Hashable x, Ord x) => Intersect x -> Intersect (Intersect x)
+powerSet = fromSet . Set.map fromSet . Set.powerSet . toSet
 
 -- | Create a singleton 'Intersect'.
 singleton :: Hashable x => x -> Intersect x
@@ -119,6 +128,10 @@ singleton = coerce HashSet.singleton
 -- | Count the candidates in an 'Intersect'.
 size :: Intersectable x => Intersect x -> Int
 size = coerce HashSet.size
+
+-- | Convert an 'Intersect' to a 'Set'.
+toSet :: Ord x => Intersect x -> Set x
+toSet = foldr Set.insert mempty
 
 -- | Merge two 'Intersect' values with set __union__.
 union :: Intersectable x => Intersect x -> Intersect x -> Intersect x 

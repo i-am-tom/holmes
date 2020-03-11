@@ -38,6 +38,7 @@ library
                , Data.CDCL
 
   build-depends: base >= 4.12 && < 4.14
+               , containers >= 0.6 && < 0.7
                , hashable >= 1.3 && < 1.4
                , hedgehog >= 1.0 && < 1.1
                , logict >= 0.7 && < 0.8

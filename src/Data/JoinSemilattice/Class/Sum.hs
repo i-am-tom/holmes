@@ -31,4 +31,4 @@ negateR :: (Num x, SumR x) => ( x, x ) -> ( x, x )
 negateR ( x, y ) = let ( x', y', _ ) = addR ( x, y, 0 ) in ( x', y' )
 
 instance (Eq x, Num x) => SumR (Defined x)
-instance (Bounded x, Enum x, Eq x, Hashable x, Num x) => SumR (Intersect x)
+instance (Bounded x, Enum x, Ord x, Hashable x, Num x) => SumR (Intersect x)

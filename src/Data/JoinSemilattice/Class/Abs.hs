@@ -34,6 +34,6 @@ class Merge x => AbsR (x :: Type) where
 
 instance (Eq x, Num x) => AbsR (Defined x)
 
-instance (Bounded x, Enum x, Eq x, Hashable x, Num x)
+instance (Bounded x, Enum x, Ord x, Hashable x, Num x)
     => AbsR (Intersect x) where
   absR ( x, y ) = ( Intersect.union y (negate y), abs x )

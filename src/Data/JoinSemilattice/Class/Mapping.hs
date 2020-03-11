@@ -1,10 +1,8 @@
 {-# LANGUAGE ConstraintKinds #-}
-{-# LANGUAGE DefaultSignatures #-}
 {-# LANGUAGE FunctionalDependencies #-}
 {-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE QuantifiedConstraints #-}
 {-# LANGUAGE UndecidableInstances #-}
-{-# LANGUAGE ViewPatterns #-}
 
 {-|
 Module      : Data.JoinSemilattice.Class.Mapping
@@ -14,28 +12,38 @@ License     : MIT
 -}
 module Data.JoinSemilattice.Class.Mapping where
 
-import Control.Applicative (liftA2)
 import Data.JoinSemilattice.Class.Merge (Merge)
-import Data.JoinSemilattice.Defined (Defined)
+import Data.JoinSemilattice.Defined (Defined (..))
 import Data.JoinSemilattice.Intersect (Intersect, Intersectable)
 import qualified Data.JoinSemilattice.Intersect as Intersect
 import Data.Kind (Constraint, Type)
-import Data.List.NonEmpty (unzip)
-import Prelude hiding (unzip)
 
 -- | Lift a relationship between two values over some type constructor.
 -- Typically, this type constructor will be the parameter type.
 class (forall x. c x => Merge (f x))
     => Mapping (f :: Type -> Type) (c :: Type -> Constraint) | f -> c where
-  mapR :: (c x, c y) => ((x, y) -> (x, y)) -> ((f x, f y) -> (f x, f y))
+  mapR :: (c x, c y) => (Maybe (x -> y), Maybe (y -> x)) -> ((f x, f y) -> (f x, f y))
 
-  default mapR :: Applicative f => ((x, y) -> (x, y)) -> ((f x, f y) -> (f x, f y))
-  mapR f (xs, ys) = unzip (liftA2 (curry f) xs ys)
+instance Mapping Defined Eq where
+  mapR ( fs, gs ) ( xs, ys )
+    = ( case ys of
+          Unknown   -> Unknown
+          Conflict  -> Conflict
+          Exactly y -> case gs of Just g  -> Exactly (g y)
+                                  Nothing -> Unknown
 
-instance Mapping Defined Eq
+      , case xs of
+          Unknown   -> Unknown
+          Conflict  -> Conflict
+          Exactly x -> case fs of Just f  -> Exactly (f x)
+                                  Nothing -> Unknown
+      )
 
 instance Mapping Intersect Intersectable where
-  mapR f (Intersect.toList -> xs, Intersect.toList -> ys) = do
-    let ( xs', ys' ) = unzip (liftA2 (curry f) xs ys)
+  mapR ( fs, gs ) ( xs, ys )
+    = ( case gs of Just g  -> Intersect.map g ys
+                   Nothing -> mempty
 
-    ( Intersect.fromList xs', Intersect.fromList ys' )
+      , case fs of Just f  -> Intersect.map f xs
+                   Nothing -> mempty
+      )

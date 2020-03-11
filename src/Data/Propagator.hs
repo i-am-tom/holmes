@@ -395,18 +395,18 @@ abs' = Unary (Cell.unary absR)
 -- type. Unlike 'over', this function abstracts away the specific behaviour of
 -- the parameter type (such as 'Data.JoinSemilattice.Defined.Defined').
 (.$) :: (Mapping f c, c x, c y) => (x -> y) -> Prop m (f x) -> Prop m (f y)
-(.$) f = Unary (Cell.unary (mapR \( x, _ ) -> ( x, f x )))
+(.$) f = Unary (Cell.unary (mapR (Just f, Nothing)))
 
 -- | Lift a three-way relationship over two propagator networks' foci to
 -- produce a third propagator network with a focus on the third value in the
 -- relationship.
 --
 -- /... It's 'Control.Applicative.liftA2' for propagators./
-zipWith' :: (Zipping f c, c x, c y, c z) => ((x, y, z) -> (x, y, z)) -> Prop m (f x) -> Prop m (f y) -> Prop m (f z)
-zipWith' f = Binary (Cell.binary (zipWithR f))
+zipWith' :: (Zipping f c, c x, c y, c z) => (x -> y -> z) -> Prop m (f x) -> Prop m (f y) -> Prop m (f z)
+zipWith' f = Binary (Cell.binary (zipWithR (Just (uncurry f), Nothing, Nothing)))
 
 -- | Produce a network in which the raw values of a given network are used to
 -- produce new parameter types. See the "wave function collapse" demo for an
 -- example usage.
 (.>>=) :: (FlatMapping f c, c x, c y) => Prop m (f x) -> (x -> f y) -> Prop m (f y)
-(.>>=) xs f = Unary (Cell.unary (flatMapR \( x, _ ) -> ( x, f x ))) xs
+(.>>=) xs f = Unary (Cell.unary (flatMapR (Just f, Nothing))) xs

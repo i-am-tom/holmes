@@ -113,7 +113,7 @@ instance Eq content => Merge (Defined content) where
     | this == that = Unchanged
     | otherwise    = Failure
 
-instance (Bounded x, Enum x, Eq x, Hashable x)
+instance (Bounded x, Enum x, Ord x, Hashable x)
     => Merge (Intersect x) where
   before <<- news = case before <> news of
     joined | Intersect.size joined < 1                     -> Failure

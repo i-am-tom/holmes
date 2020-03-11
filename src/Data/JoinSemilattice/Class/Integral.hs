@@ -42,7 +42,7 @@ instance (Eq x, Integral x) => IntegralR (Defined x) where
       ,  x - (y * z)
       )
 
-instance (Bounded x, Enum x, Eq x, Hashable x, Integral x)
+instance (Bounded x, Enum x, Ord x, Hashable x, Integral x)
     => IntegralR (Intersect x) where
   divModR ( x, y, z, w )
     = ( y * z + w
