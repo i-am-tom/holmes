@@ -36,6 +36,7 @@ module Control.Monad.Holmes
   , whenever
   ) where
 
+import Control.Monad.Fail (MonadFail (..))
 import Control.Monad.Cell.Class (MonadCell (..))
 import Control.Monad.IO.Class (MonadIO (..))
 import qualified Control.Monad.Cell.Class as Cell

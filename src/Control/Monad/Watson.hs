@@ -30,6 +30,7 @@ module Control.Monad.Watson
   , whenever
   ) where
 
+import Control.Monad.Fail (MonadFail (..))
 import Control.Monad.ST (ST, runST)
 import Control.Monad.Cell.Class (MonadCell (..))
 import qualified Control.Monad.Cell.Class as Cell
