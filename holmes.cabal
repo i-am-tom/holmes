@@ -16,6 +16,7 @@ version:            0.1.0.0
 library
   exposed-modules: Control.Monad.Cell.Class
                  , Control.Monad.Holmes
+                 , Control.Monad.MoriarT
                  , Control.Monad.Watson
                  , Data.Input.Config
                  , Data.JoinSemilattice.Defined
@@ -23,8 +24,7 @@ library
                  , Data.Propagator
                  , Data.Holmes
 
-  other-modules: Control.Monad.MoriarT
-               , Data.JoinSemilattice.Class.Abs
+  other-modules: Data.JoinSemilattice.Class.Abs
                , Data.JoinSemilattice.Class.Boolean
                , Data.JoinSemilattice.Class.Eq
                , Data.JoinSemilattice.Class.FlatMapping
