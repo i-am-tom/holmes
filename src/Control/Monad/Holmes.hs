@@ -26,13 +26,13 @@ module Control.Monad.Holmes
   ( Holmes
   , MonadCell
 
-  , unsafeRead
   , backward
   , forward
   , runAll
   , runOne
   , satisfying
   , shuffle
+  , unsafeRead
   , whenever
   ) where
 
@@ -58,6 +58,9 @@ import Type.Reflection (Typeable)
 newtype Holmes (x :: Type)
   = Holmes { runHolmes :: MoriarT IO x }
   deriving (Functor, Applicative, Monad)
+
+instance MonadFail Holmes where
+  fail _ = discard
 
 instance MonadCell Holmes where
   newtype Cell Holmes x = Cell { unwrap :: Cell (MoriarT IO) x }

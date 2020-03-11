@@ -21,12 +21,12 @@ module Control.Monad.Watson
   ( Watson
   , MonadCell (..)
 
-  , unsafeRead
   , backward
   , forward
   , runAll
   , runOne
   , satisfying
+  , unsafeRead
   , whenever
   ) where
 
@@ -51,6 +51,9 @@ import Type.Reflection (Typeable)
 newtype Watson (h :: Type) (x :: Type)
   = Watson { runWatson :: MoriarT (ST h) x }
   deriving (Functor, Applicative, Monad)
+
+instance MonadFail (Watson h) where
+  fail _ = discard
 
 instance MonadCell (Watson h) where
   newtype Cell (Watson h) x = Cell { unwrap :: Cell (MoriarT (ST h)) x }
