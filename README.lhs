@@ -4,6 +4,8 @@
 the hood, it uses **propagator networks** and **conflict-directed clause
 learning** to optimise the search over the parameter space.
 
+Now available on [Hackage](https://hackage.haskell.org/package/holmes)!
+
 <!--
 
 ```haskell
