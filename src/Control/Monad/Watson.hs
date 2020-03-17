@@ -4,6 +4,7 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE CPP #-}
 
 {-|
 Module      : Control.Monad.Watson
@@ -30,7 +31,9 @@ module Control.Monad.Watson
   , whenever
   ) where
 
+#if __GLASGOW_HASKELL__ == 806
 import Control.Monad.Fail (MonadFail, fail)
+#endif
 import Control.Monad.ST (ST, runST)
 import Control.Monad.Cell.Class (MonadCell (..))
 import qualified Control.Monad.Cell.Class as Cell
