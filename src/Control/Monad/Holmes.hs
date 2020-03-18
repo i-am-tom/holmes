@@ -6,6 +6,7 @@
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE ViewPatterns #-}
+{-# LANGUAGE CPP #-}
 
 {-|
 Module      : Control.Monad.Holmes
@@ -36,6 +37,9 @@ module Control.Monad.Holmes
   , whenever
   ) where
 
+#if __GLASGOW_HASKELL__ == 806
+import Control.Monad.Fail (MonadFail, fail)
+#endif
 import Control.Monad.Cell.Class (MonadCell (..))
 import Control.Monad.IO.Class (MonadIO (..))
 import qualified Control.Monad.Cell.Class as Cell
