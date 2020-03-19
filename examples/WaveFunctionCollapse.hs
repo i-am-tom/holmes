@@ -9,7 +9,7 @@ module WaveFunctionCollapse where
 import Data.Function ((&))
 import Data.Hashable (Hashable)
 import Data.Holmes
-import Data.JoinSemilattice.Intersect (fromList, singleton, toList)
+import Data.JoinSemilattice.Intersect (fromList, toList)
 import Data.List (transpose)
 import Data.List.Split (chunksOf)
 import Data.Maybe (isJust, mapMaybe)
@@ -93,16 +93,16 @@ maps = do
     and'
       [ -- As we're trying to draw an island, we'll surround the whole map with
         -- water:
-        all' (.== lift (singleton Water)) (head rows)
-      , all' (.== lift (singleton Water)) (last rows)
+        all' (.== lift Water) (head rows)
+      , all' (.== lift Water) (last rows)
 
-      , all' (.== lift (singleton Water)) (head columns)
-      , all' (.== lift (singleton Water)) (last columns)
+      , all' (.== lift Water) (head columns)
+      , all' (.== lift Water) (last columns)
 
         -- To generate more interesting maps, we'll require that every valid
         -- map contains at least one tree (and thus has at least one 5 × 5
         -- island).
-      , any' (.== lift (singleton Tree)) board
+      , any' (.== lift Tree) board
 
         -- For each tile, find the valid surrounding tiles, then constraint its
         -- neighbours to those possibilities.

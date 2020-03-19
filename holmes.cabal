@@ -30,6 +30,7 @@ library
                , Data.JoinSemilattice.Class.FlatMapping
                , Data.JoinSemilattice.Class.Fractional
                , Data.JoinSemilattice.Class.Integral
+               , Data.JoinSemilattice.Class.Lifting
                , Data.JoinSemilattice.Class.Mapping
                , Data.JoinSemilattice.Class.Merge
                , Data.JoinSemilattice.Class.Ord

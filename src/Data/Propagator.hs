@@ -54,6 +54,7 @@ import Data.JoinSemilattice.Class.Eq (EqR (..), neR)
 import Data.JoinSemilattice.Class.FlatMapping (FlatMapping (..))
 import Data.JoinSemilattice.Class.Fractional (FractionalR (..), divideR, multiplyR, recipR)
 import Data.JoinSemilattice.Class.Integral (IntegralR (..), divR, modR, timesR)
+import Data.JoinSemilattice.Class.Lifting (Lifting (..))
 import Data.JoinSemilattice.Class.Mapping (Mapping (..))
 import Data.JoinSemilattice.Class.Merge (Merge)
 import Data.JoinSemilattice.Class.Ord (OrdR (..), gtR, gteR, ltR)
@@ -132,10 +133,8 @@ down = \case
     f x y z
     pure z
 
--- | Lift a regular value into a propagator network. This is analogous to
--- 'pure' for some 'Applicative' type.
-lift :: MonadCell m => x -> Prop m x
-lift = Nullary . Cell.fill
+lift :: forall f m c x. (MonadCell m, c x) => Lifting f c => x -> Prop m (f x)
+lift = Nullary . fill . lift'
 
 -- | Lift a regular function into a propagator network. The function is lifted
 -- into a relationship with one-way information flow.
