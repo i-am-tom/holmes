@@ -1,4 +1,5 @@
 {-# LANGUAGE BlockArguments #-}
+{-# LANGUAGE ConstraintKinds #-}
 {-# LANGUAGE GeneralisedNewtypeDeriving #-}
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE RecordWildCards #-}
@@ -47,6 +48,7 @@ import Control.Monad.MoriarT (MoriarT (..))
 import qualified Control.Monad.MoriarT as MoriarT
 import Data.Coerce (coerce)
 import Data.Input.Config (Config (..))
+import Data.JoinSemilattice.Class.Boolean (BooleanR)
 import Data.JoinSemilattice.Class.Eq (EqR)
 import Data.JoinSemilattice.Class.Merge (Merge)
 import Data.Kind (Type)
@@ -121,7 +123,7 @@ runOne = coerce (MoriarT.runOne @IO)
 
 -- | Given an input configuration, and a predicate on those input variables,
 -- return the __first__ configuration that satisfies the predicate.
-satisfying :: (EqR x b, Typeable x) => Config Holmes x -> (forall m. MonadCell m => [ Prop m x ] -> Prop m b) -> IO (Maybe [ x ])
+satisfying :: (EqR f c, c x, Merge (f x), Typeable (f x), BooleanR (f Bool)) => Config Holmes (f x) -> (forall m. MonadCell m => [ Prop m (f x) ] -> Prop m (f Bool)) -> IO (Maybe [ f x ])
 satisfying (coerce -> config :: Config (MoriarT IO) x) f = MoriarT.runOne (MoriarT.solve config f)
 
 -- | Shuffle the refinements in a configuration. If we make a configuration
@@ -141,5 +143,5 @@ shuffle Config{..} = Config initial \x -> do
 -- return __all configurations__ that satisfy the predicate. It should be noted
 -- that there's nothing lazy about this; if your problem has a lot of
 -- solutions, or your search space is very big, you'll be waiting a long time!
-whenever :: (EqR x b, Typeable x) => Config Holmes x -> (forall m. MonadCell m => [ Prop m x ] -> Prop m b) -> IO [[ x ]]
+whenever :: (EqR f c, c x, Merge (f x), Typeable (f x), BooleanR (f Bool)) => Config Holmes (f x) -> (forall m. MonadCell m => [ Prop m (f x) ] -> Prop m (f Bool)) -> IO [[ f x ]]
 whenever (coerce -> config :: Config (MoriarT IO) x) f = MoriarT.runAll (MoriarT.solve config f)

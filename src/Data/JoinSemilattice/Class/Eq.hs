@@ -1,3 +1,4 @@
+{-# LANGUAGE ConstraintKinds #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE KindSignatures #-}
 {-# LANGUAGE FunctionalDependencies #-}
@@ -12,13 +13,11 @@ License     : MIT
 module Data.JoinSemilattice.Class.Eq where
 
 import Control.Applicative (liftA2)
-import Data.Hashable (Hashable)
 import Data.JoinSemilattice.Class.Boolean (BooleanR (..))
-import Data.JoinSemilattice.Class.Merge (Merge)
 import Data.JoinSemilattice.Defined (Defined (..))
-import Data.JoinSemilattice.Intersect (Intersect (..))
+import Data.JoinSemilattice.Intersect (Intersect (..), Intersectable)
 import qualified Data.JoinSemilattice.Intersect as Intersect
-import Data.Kind (Type)
+import Data.Kind (Constraint, Type)
 
 -- | Equality between two variables as a relationship between them and their
 -- result. The hope here is that, if we learn the output before the inputs, we
@@ -26,12 +25,12 @@ import Data.Kind (Type)
 -- result is exactly /true/, for example, we can effectively then
 -- 'Control.Monad.Cell.Class.unify' the two input cells, as we know that their
 -- values will always be the same.
-class (BooleanR b, Merge x) => EqR (x :: Type) (b :: Type) | x -> b where
-  eqR :: ( x, x, b ) -> ( x, x, b )
+class EqR (f :: Type -> Type) (c :: Type -> Constraint) | f -> c where
+  eqR :: c x => ( f x, f x, f Bool ) -> ( f x, f x, f Bool )
 
 -- | A relationship between two variables and the result of a not-equals
 -- comparison between them.
-neR :: EqR x b => ( x, x, b ) -> ( x, x, b )
+neR :: (EqR f c, c x, BooleanR (f Bool)) => ( f x, f x, f Bool ) -> ( f x, f x, f Bool )
 neR ( x, y, z )
   = let ( notZ', _ ) = notR ( mempty, z )
         ( x', y', notZR ) = eqR ( x, y, notZ' )
@@ -39,15 +38,14 @@ neR ( x, y, z )
 
     in ( x', y', z' )
 
-instance Eq x => EqR (Defined x) (Defined Bool) where
+instance EqR Defined Eq where
   eqR ( x, y, z )
     = ( if z == trueR then y else mempty
       , if z == trueR then x else mempty
       , liftA2 (==) x y
       )
 
-instance (Bounded x, Enum x, Ord x, Hashable x)
-    => EqR (Intersect x) (Intersect Bool) where
+instance EqR Intersect Intersectable where
   eqR ( x, y, z )
     = ( if | z == trueR                           -> y
            | z == falseR && Intersect.size y == 1 -> Intersect.except y

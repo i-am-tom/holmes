@@ -243,7 +243,7 @@ infixr 2 .||
 -- result of testing the two for equality.
 --
 -- In other words, "it's '(==)' for propagators".
-(.==) :: (EqR x b, MonadCell m) => Prop m x -> Prop m x -> Prop m b
+(.==) :: (EqR f c, c x, Merge (f x), Merge (f Bool), MonadCell m) => Prop m (f x) -> Prop m (f x) -> Prop m (f Bool)
 (.==) = Binary (Cell.binary eqR)
 
 infix 4 .==
@@ -252,7 +252,7 @@ infix 4 .==
 -- result of testing the two for inequality.
 --
 -- In other words, "it's '(/=)' for propagators".
-(./=) :: (EqR x b, MonadCell m) => Prop m x -> Prop m x -> Prop m b
+(./=) :: (EqR f c, c x, Merge (f x), Merge (f Bool), BooleanR (f Bool), MonadCell m) => Prop m (f x) -> Prop m (f x) -> Prop m (f Bool)
 (./=) = Binary (Cell.binary neR)
 
 infix 4 ./=
@@ -262,7 +262,7 @@ infix 4 ./=
 -- every propagator network's focus is different to the others.
 --
 -- /Are all the values in this list distinct?/
-distinct :: (EqR x b, MonadCell m) => [ Prop m x ] -> Prop m b
+distinct :: (EqR f c, c x, Merge (f x), BooleanR (f Bool), MonadCell m) => [ Prop m (f x) ] -> Prop m (f Bool)
 distinct = \case
   x : xs -> all' (./= x) xs .&& distinct xs
   [    ] -> Nullary (Cell.fill trueR)
@@ -271,7 +271,7 @@ distinct = \case
 -- whether the first network's focus be greater than the second.
 --
 -- In other words, "it's '(>)' for propagators".
-(.>) :: (OrdR x b, MonadCell m) => Prop m x -> Prop m x -> Prop m b
+(.>) :: (OrdR f c, c x, Merge (f x), BooleanR (f Bool), MonadCell m) => Prop m (f x) -> Prop m (f x) -> Prop m (f Bool)
 (.>) = Binary (Cell.binary gtR)
 
 infix 4 .>
@@ -280,7 +280,7 @@ infix 4 .>
 -- whether the first network's focus be greater than or equal to the second.
 --
 -- In other words, "it's '(>=)' for propagators".
-(.>=) :: (OrdR x b, MonadCell m) => Prop m x -> Prop m x -> Prop m b
+(.>=) :: (OrdR f c, c x, Merge (f x), Merge (f Bool), MonadCell m) => Prop m (f x) -> Prop m (f x) -> Prop m (f Bool)
 (.>=) = Binary (Cell.binary gteR)
 
 infix 4 .>=
@@ -289,7 +289,7 @@ infix 4 .>=
 -- whether the first network's focus be less than the second.
 --
 -- In other words, "it's '(<)' for propagators".
-(.<) :: (OrdR x b, MonadCell m) => Prop m x -> Prop m x -> Prop m b
+(.<) :: (OrdR f c, c x, Merge (f x), Merge (f Bool), BooleanR (f Bool), MonadCell m) => Prop m (f x) -> Prop m (f x) -> Prop m (f Bool)
 (.<) = Binary (Cell.binary ltR)
 
 infix 4 .<
@@ -298,7 +298,7 @@ infix 4 .<
 -- whether the first network's focus be less than or equal to the second.
 --
 -- In other words, "it's '(<=)' for propagators".
-(.<=) :: (OrdR x b, MonadCell m) => Prop m x -> Prop m x -> Prop m b
+(.<=) :: (OrdR f c, c x, Merge (f x), Merge (f Bool), MonadCell m) => Prop m (f x) -> Prop m (f x) -> Prop m (f Bool)
 (.<=) = Binary (Cell.binary lteR)
 
 infix 4 .<=
