@@ -14,14 +14,15 @@ License     : MIT
 module Data.JoinSemilattice.Class.Ord where
 
 import Control.Applicative (liftA2)
-import Data.JoinSemilattice.Defined (Defined (..))
+import Data.JoinSemilattice.Defined (Defined (..), Definable)
 import Data.JoinSemilattice.Intersect (Intersect (..), Intersectable)
 import qualified Data.JoinSemilattice.Intersect as Intersect
 import Data.JoinSemilattice.Class.Boolean (BooleanR (..))
+import Data.JoinSemilattice.Class.Eq (EqR)
 import Data.Kind (Constraint, Type)
 
 -- | Comparison relationships between two values and their comparison result.
-class OrdR (f :: Type -> Type) (c :: Type -> Constraint) | f -> c where
+class EqR f c => OrdR (f :: Type -> Type) (c :: Type -> Constraint) | f -> c where
 
   -- | A relationship between two values and whether the left is less than or
   -- equal to the right.
@@ -43,9 +44,6 @@ ltR ( x, y, z )
         ( _, z' ) = notR ( notZR, mempty )
 
     in ( x', y', z' )
-
-class (Eq x, Ord x) => Definable x
-instance (Eq x, Ord x) => Definable x
 
 instance OrdR Defined Definable where
   lteR ( x, y, _ ) = ( mempty, mempty, liftA2 (<=) x y )

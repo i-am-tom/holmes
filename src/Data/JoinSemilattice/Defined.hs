@@ -3,8 +3,10 @@
 {-# LANGUAGE DeriveFunctor #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DerivingVia #-}
+{-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE UndecidableInstances #-}
 
 {-|
 Module      : Data.JoinSemilattice.Defined
@@ -41,6 +43,12 @@ data Defined (x :: Type)
   deriving stock (Eq, Ord, Show, Functor, Generic)
   deriving anyclass (Hashable)
   deriving (Bounded, Num) via (Ap Defined x)
+
+class (Eq content, Ord content)
+  => Definable content
+
+instance (Eq content, Ord content)
+  => Definable content
 
 instance Enum content => Enum (Defined content) where
   fromEnum = \case

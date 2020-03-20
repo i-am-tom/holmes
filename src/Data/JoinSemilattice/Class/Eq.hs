@@ -14,7 +14,7 @@ module Data.JoinSemilattice.Class.Eq where
 
 import Control.Applicative (liftA2)
 import Data.JoinSemilattice.Class.Boolean (BooleanR (..))
-import Data.JoinSemilattice.Defined (Defined (..))
+import Data.JoinSemilattice.Defined (Defined (..), Definable)
 import Data.JoinSemilattice.Intersect (Intersect (..), Intersectable)
 import qualified Data.JoinSemilattice.Intersect as Intersect
 import Data.Kind (Constraint, Type)
@@ -38,7 +38,7 @@ neR ( x, y, z )
 
     in ( x', y', z' )
 
-instance EqR Defined Eq where
+instance EqR Defined Definable where
   eqR ( x, y, z )
     = ( if z == trueR then y else mempty
       , if z == trueR then x else mempty
