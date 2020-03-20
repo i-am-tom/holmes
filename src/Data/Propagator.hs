@@ -243,7 +243,7 @@ infixr 2 .||
 -- result of testing the two for equality.
 --
 -- In other words, "it's '(==)' for propagators".
-(.==) :: (EqR f c, c x, Merge (f x), Merge (f Bool), MonadCell m) => Prop m (f x) -> Prop m (f x) -> Prop m (f Bool)
+(.==) :: (EqR f c, c x, Merge (f x), Merge (f Bool), BooleanR (f Bool), MonadCell m) => Prop m (f x) -> Prop m (f x) -> Prop m (f Bool)
 (.==) = Binary (Cell.binary eqR)
 
 infix 4 .==
