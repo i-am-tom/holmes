@@ -163,7 +163,7 @@ lift2 f = binary \(x, y, _) -> (mempty, mempty, f x y)
 -- values.
 --
 -- It's a lot of words, but the intuition is, "'(&&)' over propagators".
-(.&&) :: BooleanR b => Prop m b -> Prop m b -> Prop m b
+(.&&) :: BooleanR f => Prop m (f Bool) -> Prop m (f Bool) -> Prop m (f Bool)
 (.&&) = Binary (Cell.binary andR)
 
 infixr 3 .&&
@@ -173,7 +173,7 @@ infixr 3 .&&
 -- focus on the conjunction of all these values.
 --
 -- In other words, "'all' over propagators".
-all' :: (BooleanR b, MonadCell m) => (x -> Prop m b) -> [ x ] -> Prop m b
+all' :: (BooleanR f, MonadCell m) => (x -> Prop m (f Bool)) -> [ x ] -> Prop m (f Bool)
 all' f = and' . map f
 
 -- | The same as the 'all'' function, but with access to the index of the
@@ -181,14 +181,14 @@ all' f = and' . map f
 -- each element to /other/ elements within the array.
 --
 -- /For example, cells "surrounding" the current cell in a conceptual "board"./
-allWithIndex' :: (BooleanR b, MonadCell m) => (Int -> x -> Prop m b) -> [ x ] -> Prop m b
+allWithIndex' :: (BooleanR f, MonadCell m) => (Int -> x -> Prop m (f Bool)) -> [ x ] -> Prop m (f Bool)
 allWithIndex' f = all' (uncurry f) . zip [0 ..]
 
 -- | Given a list of propagator networks with a focus on boolean values, create
 -- a new network with a focus on the conjugation of all these values.
 --
 -- In other words, "'and' over propagators".
-and' :: (BooleanR b, MonadCell m) => [ Prop m b ] -> Prop m b
+and' :: (BooleanR f, MonadCell m) => [ Prop m (f Bool) ] -> Prop m (f Bool)
 and' = foldr (.&&) true
 
 -- | Run a predicate on all values in a list, producing a list of propagator
@@ -196,7 +196,7 @@ and' = foldr (.&&) true
 -- focus on the disjunction of all these values.
 --
 -- In other words, "'any' over propagators".
-any' :: (BooleanR b, MonadCell m) => (x -> Prop m b) -> [ x ] -> Prop m b
+any' :: (BooleanR f, MonadCell m) => (x -> Prop m (f Bool)) -> [ x ] -> Prop m (f Bool)
 any' f = or' . map f
 
 -- | The same as the 'any'' function, but with access to the index of the
@@ -204,37 +204,37 @@ any' f = or' . map f
 -- each element to /other/ elements within the array.
 --
 -- /For example, cells "surrounding" the current cell in a conceptual "board"./
-anyWithIndex' :: (BooleanR b, MonadCell m) => (Int -> x -> Prop m b) -> [ x ] -> Prop m b
+anyWithIndex' :: (BooleanR f, MonadCell m) => (Int -> x -> Prop m (f Bool)) -> [ x ] -> Prop m (f Bool)
 anyWithIndex' f = any' (uncurry f) . zip [0 ..]
 
 -- | Different parameter types come with different representations for 'Bool'.
 -- This value is a propagator network with a focus on a polymorphic "falsey"
 -- value.
-false :: (BooleanR b, MonadCell m) => Prop m b
+false :: (BooleanR f, MonadCell m) => Prop m (f Bool)
 false = Nullary (Cell.fill falseR)
 
 -- | Given a propagator network with a focus on a boolean value, produce a
 -- network with a focus on its negation.
 --
 -- ... It's "'not' over propagators".
-not' :: (BooleanR b, MonadCell m) => Prop m b -> Prop m b 
+not' :: (BooleanR f, MonadCell m) => Prop m (f Bool) -> Prop m (f Bool) 
 not' = Unary (Cell.unary notR)
 
 -- | Given a list of propagator networks with a focus on boolean values, create
 -- a new network with a focus on the disjunction of all these values.
 --
 -- In other words, "'or' over propagators".
-or' :: (BooleanR b, MonadCell m) => [ Prop m b ] -> Prop m b 
+or' :: (BooleanR f, MonadCell m) => [ Prop m (f Bool) ] -> Prop m (f Bool)
 or' = foldr (.||) false
 
 -- | Different parameter types come with different representations for 'Bool'.
 -- This value is a propagator network with a focus on a polymorphic "truthy"
 -- value.
-true :: (BooleanR b, MonadCell m) => Prop m b
+true :: (BooleanR f, MonadCell m) => Prop m (f Bool)
 true = Nullary (Cell.fill trueR)
 
 -- | Calculate the disjunction of two boolean propagator network values.
-(.||) :: BooleanR b => Prop m b -> Prop m b -> Prop m b
+(.||) :: BooleanR f => Prop m (f Bool) -> Prop m (f Bool) -> Prop m (f Bool)
 (.||) = Binary (Cell.binary orR)
 
 infixr 2 .||
@@ -243,7 +243,7 @@ infixr 2 .||
 -- result of testing the two for equality.
 --
 -- In other words, "it's '(==)' for propagators".
-(.==) :: (EqR x b, MonadCell m) => Prop m x -> Prop m x -> Prop m b
+(.==) :: (EqR f, EqC f x, MonadCell m) => Prop m (f x) -> Prop m (f x) -> Prop m (f Bool)
 (.==) = Binary (Cell.binary eqR)
 
 infix 4 .==
@@ -252,7 +252,7 @@ infix 4 .==
 -- result of testing the two for inequality.
 --
 -- In other words, "it's '(/=)' for propagators".
-(./=) :: (EqR x b, MonadCell m) => Prop m x -> Prop m x -> Prop m b
+(./=) :: (EqR f, EqC f x, MonadCell m) => Prop m (f x) -> Prop m (f x) -> Prop m (f Bool)
 (./=) = Binary (Cell.binary neR)
 
 infix 4 ./=
@@ -262,7 +262,7 @@ infix 4 ./=
 -- every propagator network's focus is different to the others.
 --
 -- /Are all the values in this list distinct?/
-distinct :: (EqR x b, MonadCell m) => [ Prop m x ] -> Prop m b
+distinct :: (EqR f, EqC f x, MonadCell m) => [ Prop m (f x) ] -> Prop m (f Bool)
 distinct = \case
   x : xs -> all' (./= x) xs .&& distinct xs
   [    ] -> Nullary (Cell.fill trueR)
@@ -271,7 +271,7 @@ distinct = \case
 -- whether the first network's focus be greater than the second.
 --
 -- In other words, "it's '(>)' for propagators".
-(.>) :: (OrdR x b, MonadCell m) => Prop m x -> Prop m x -> Prop m b
+(.>) :: (OrdR f, OrdC f x, MonadCell m) => Prop m (f x) -> Prop m (f x) -> Prop m (f Bool)
 (.>) = Binary (Cell.binary gtR)
 
 infix 4 .>
@@ -280,7 +280,7 @@ infix 4 .>
 -- whether the first network's focus be greater than or equal to the second.
 --
 -- In other words, "it's '(>=)' for propagators".
-(.>=) :: (OrdR x b, MonadCell m) => Prop m x -> Prop m x -> Prop m b
+(.>=) :: (OrdR f, OrdC f x, MonadCell m) => Prop m (f x) -> Prop m (f x) -> Prop m (f Bool)
 (.>=) = Binary (Cell.binary gteR)
 
 infix 4 .>=
@@ -289,7 +289,7 @@ infix 4 .>=
 -- whether the first network's focus be less than the second.
 --
 -- In other words, "it's '(<)' for propagators".
-(.<) :: (OrdR x b, MonadCell m) => Prop m x -> Prop m x -> Prop m b
+(.<) :: (OrdR f, OrdC f x, MonadCell m) => Prop m (f x) -> Prop m (f x) -> Prop m (f Bool)
 (.<) = Binary (Cell.binary ltR)
 
 infix 4 .<
@@ -298,7 +298,7 @@ infix 4 .<
 -- whether the first network's focus be less than or equal to the second.
 --
 -- In other words, "it's '(<=)' for propagators".
-(.<=) :: (OrdR x b, MonadCell m) => Prop m x -> Prop m x -> Prop m b
+(.<=) :: (OrdR f, OrdC f x, MonadCell m) => Prop m (f x) -> Prop m (f x) -> Prop m (f Bool)
 (.<=) = Binary (Cell.binary lteR)
 
 infix 4 .<=

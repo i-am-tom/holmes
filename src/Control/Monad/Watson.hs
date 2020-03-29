@@ -41,7 +41,7 @@ import Control.Monad.MoriarT (MoriarT (..))
 import qualified Control.Monad.MoriarT as MoriarT
 import Data.Coerce (coerce)
 import Data.Input.Config (Config (..))
-import Data.JoinSemilattice.Class.Eq (EqR)
+import Data.JoinSemilattice.Class.Eq (EqR (..))
 import Data.JoinSemilattice.Class.Merge (Merge)
 import Data.Kind (Type)
 import Data.Propagator (Prop)
@@ -113,12 +113,28 @@ runOne xs = runST (MoriarT.runOne (runWatson xs))
 
 -- | Given an input configuration, and a predicate on those input variables,
 -- return the __first__ configuration that satisfies the predicate.
-satisfying :: (EqR x b, Typeable x) => (forall h. Config (Watson h) x) -> (forall m. MonadCell m => [ Prop m x ] -> Prop m b) -> Maybe [ x ]
-satisfying config f = runST (MoriarT.runOne (MoriarT.solve (coerce config) f))
+satisfying
+  :: ( EqC f x
+     , EqR f
+     , Typeable x
+     )
+  => (forall h. Config (Watson h) (f x))
+  -> (forall m. MonadCell m => [ Prop m (f x) ] -> Prop m (f Bool))
+  -> Maybe [ f x ]
+satisfying config f
+  = runST (MoriarT.runOne (MoriarT.solve (coerce config) f))
 
 -- | Given an input configuration, and a predicate on those input variables,
 -- return __all configurations__ that satisfy the predicate. It should be noted
 -- that there's nothing lazy about this; if your problem has a lot of
 -- solutions, or your search space is very big, you'll be waiting a long time!
-whenever :: (EqR x b, Typeable x) => (forall h. Config (Watson h) x) -> (forall m. MonadCell m => [ Prop m x ] -> Prop m b) -> [[ x ]]
-whenever config f = runST (MoriarT.runAll (MoriarT.solve (coerce config) f))
+whenever
+  :: ( EqC f x
+     , EqR f
+     , Typeable x
+     )
+  => (forall h. Config (Watson h) (f x))
+  -> (forall m. MonadCell m => [ Prop m (f x) ] -> Prop m (f Bool))
+  -> [[ f x ]]
+whenever config f
+  = runST (MoriarT.runAll (MoriarT.solve (coerce config) f))

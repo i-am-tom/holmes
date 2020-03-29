@@ -186,7 +186,15 @@ runOne
 -- | Given an input configuration, and a predicate on those input variables,
 -- compute the configurations that satisfy the predicate. This result (or these
 -- results) can be extracted using 'runOne' or 'runAll'.
-solve :: (PrimMonad m, EqR x b, Merge x, Typeable x) => Config (MoriarT m) x -> (forall f. MonadCell f => [ Prop f x ] -> Prop f b) -> MoriarT m [ x ]
+solve
+  :: ( PrimMonad m
+     , EqR f
+     , Merge (f x)
+     , Typeable x
+     )
+  => Config (MoriarT m) (f x)
+  -> (forall m'. MonadCell m' => [ Prop m' (f x) ] -> Prop m' (f Bool))
+  -> MoriarT m [ f x ]
 solve Config{..} predicate = do
   inputs <- traverse Cell.fill initial
   output <- Prop.down (predicate (map Prop.up inputs))

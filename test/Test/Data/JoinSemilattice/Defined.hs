@@ -78,19 +78,19 @@ hprop_booleanR_andR_simple = property do
   z === Exactly (x && y)
 
 hprop_booleanR_andR :: Property
-hprop_booleanR_andR = BooleanR.booleanR_andR @(Defined Bool)
+hprop_booleanR_andR = BooleanR.booleanR_andR @Defined
 
 hprop_booleanR_deMorgan_and :: Property
-hprop_booleanR_deMorgan_and = BooleanR.booleanR_deMorgan_and @(Defined Bool)
+hprop_booleanR_deMorgan_and = BooleanR.booleanR_deMorgan_and @Defined
 
 hprop_booleanR_deMorgan_or :: Property
-hprop_booleanR_deMorgan_or = BooleanR.booleanR_deMorgan_or @(Defined Bool)
+hprop_booleanR_deMorgan_or = BooleanR.booleanR_deMorgan_or @Defined
 
 hprop_booleanR_notR :: Property
-hprop_booleanR_notR = BooleanR.booleanR_notR @(Defined Bool)
+hprop_booleanR_notR = BooleanR.booleanR_notR @Defined
 
 hprop_booleanR_orR :: Property
-hprop_booleanR_orR = BooleanR.booleanR_orR @(Defined Bool)
+hprop_booleanR_orR = BooleanR.booleanR_orR @Defined
 
 hprop_eqR_simple :: Property
 hprop_eqR_simple = property do

@@ -24,23 +24,24 @@ import Data.Kind (Type)
 -- tell you that the /output/ of @x && y@ is 'True', you can tell me what the
 -- inputs are, even if your computer can't. The implementations of 'BooleanR'
 -- should be such that all directions of inference are considered.
-class Merge x => BooleanR (x :: Type) where
+class Merge (f Bool) => BooleanR (f :: Type -> Type) where
+
   -- | An overloaded 'False' value.
-  falseR :: x
+  falseR :: f Bool
 
   -- | An overloaded 'True' value.
-  trueR :: x
+  trueR :: f Bool
 
   -- | A relationship between a boolean value and its opposite.
-  notR :: ( x, x ) -> ( x, x )
+  notR :: ( f Bool, f Bool ) -> ( f Bool, f Bool )
 
   -- | A relationship between two boolean values and their conjunction.
-  andR :: ( x, x, x ) -> ( x, x, x )
+  andR :: ( f Bool, f Bool, f Bool ) -> ( f Bool, f Bool, f Bool )
 
   -- | A relationship between two boolean values and their disjunction.
-  orR :: ( x, x, x ) -> ( x, x, x )
+  orR :: ( f Bool, f Bool, f Bool ) -> ( f Bool, f Bool, f Bool )
 
-instance BooleanR (Defined Bool) where
+instance BooleanR Defined where
   falseR = Exactly False
   trueR  = Exactly True
 
@@ -70,7 +71,7 @@ instance BooleanR (Defined Bool) where
       , liftA2 (||) x y
       )
 
-instance BooleanR (Intersect Bool) where
+instance BooleanR Intersect where
   falseR = Intersect.singleton False
   trueR  = Intersect.singleton True
 

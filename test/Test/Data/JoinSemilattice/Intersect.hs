@@ -54,23 +54,23 @@ hprop_booleanR_andR_simple = property do
   x <- forAll Gen.bool
   y <- forAll Gen.bool
 
-  let ( _, _, z ) = andR ( Exactly x, Exactly y, mempty )
-  z === Exactly (x && y)
+  let ( _, _, z ) = andR ( Intersect.singleton x, Intersect.singleton y, mempty )
+  z === Intersect.singleton (x && y)
 
 hprop_booleanR_andR :: Property
-hprop_booleanR_andR = BooleanR.booleanR_andR @(Defined Bool)
+hprop_booleanR_andR = BooleanR.booleanR_andR @Intersect
 
 hprop_booleanR_deMorgan_and :: Property
-hprop_booleanR_deMorgan_and = BooleanR.booleanR_deMorgan_and @(Defined Bool)
+hprop_booleanR_deMorgan_and = BooleanR.booleanR_deMorgan_and @Intersect
 
 hprop_booleanR_deMorgan_or :: Property
-hprop_booleanR_deMorgan_or = BooleanR.booleanR_deMorgan_or @(Defined Bool)
+hprop_booleanR_deMorgan_or = BooleanR.booleanR_deMorgan_or @Intersect
 
 hprop_booleanR_notR :: Property
-hprop_booleanR_notR = BooleanR.booleanR_notR @(Defined Bool)
+hprop_booleanR_notR = BooleanR.booleanR_notR @Intersect
 
 hprop_booleanR_orR :: Property
-hprop_booleanR_orR = BooleanR.booleanR_orR @(Defined Bool)
+hprop_booleanR_orR = BooleanR.booleanR_orR @Intersect
 
 hprop_eqR_simple :: Property
 hprop_eqR_simple = property do

@@ -1,7 +1,8 @@
 {-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE FunctionalDependencies #-}
-{-# LANGUAGE KindSignatures #-}
 {-# LANGUAGE MultiWayIf #-}
+{-# LANGUAGE QuantifiedConstraints #-}
+{-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE UndecidableInstances #-}
 
 {-|
 Module      : Data.JoinSemilattice.Class.Ord
@@ -12,31 +13,34 @@ License     : MIT
 module Data.JoinSemilattice.Class.Ord where
 
 import Control.Applicative (liftA2)
-import Data.Hashable (Hashable)
 import Data.JoinSemilattice.Defined (Defined (..))
-import Data.JoinSemilattice.Intersect (Intersect (..))
+import Data.JoinSemilattice.Intersect (Intersect (..), Intersectable)
 import qualified Data.JoinSemilattice.Intersect as Intersect
 import Data.JoinSemilattice.Class.Boolean (BooleanR (..))
-import Data.JoinSemilattice.Class.Eq (EqR)
-import Data.Kind (Type)
+import Data.JoinSemilattice.Class.Eq (EqR (..), EqC')
+import Data.Kind (Constraint, Type)
 
 -- | Comparison relationships between two values and their comparison result.
-class EqR x b => OrdR (x :: Type) (b :: Type) | x -> b where
+-- See 'Data.JoinSemilattice.Class.Eq.EqR' for more information on the design
+-- of this class, and a full apology for the constraints involved.
+class (EqR f, forall x. OrdC f x => EqC' f x) => OrdR (f :: Type -> Type) where
+  type OrdC f :: Type -> Constraint
+  type OrdC f = EqC f
 
   -- | A relationship between two values and whether the left is less than or
   -- equal to the right.
-  lteR :: ( x, x, b ) -> ( x, x, b )
+  lteR :: OrdC f x => ( f x, f x, f Bool ) -> ( f x, f x, f Bool )
 
 -- | Comparison between two values and their '(>)' result.
-gtR :: OrdR x b => ( x, x, b ) -> ( x, x, b )
+gtR :: (OrdR f, OrdC f x) => ( f x, f x, f Bool ) -> ( f x, f x, f Bool )
 gtR ( x, y, z ) = let ( y', x', z' ) = ltR ( y, x, z ) in ( x', y', z' )
 
 -- | Comparison between two values and their '(>=)' result.
-gteR :: OrdR x b => ( x, x, b ) -> ( x, x, b )
+gteR :: (OrdR f, OrdC f x) => ( f x, f x, f Bool ) -> ( f x, f x, f Bool )
 gteR ( x, y, z ) = let ( y', x', z' ) = lteR ( y, x, z ) in ( x', y', z' )
 
 -- | Comparison between two values and their '(<)' result.
-ltR :: OrdR x b => ( x, x, b ) -> ( x, x, b )
+ltR :: (OrdR f, OrdC f x) => ( f x, f x, f Bool ) -> ( f x, f x, f Bool )
 ltR ( x, y, z )
   = let ( notZ', _ ) = notR ( mempty, z )
         ( x', y', notZR ) = gteR ( x, y, notZ' )
@@ -44,11 +48,17 @@ ltR ( x, y, z )
 
     in ( x', y', z' )
 
-instance Ord x => OrdR (Defined x) (Defined Bool) where
+instance OrdR Defined where
+  type OrdC Defined = Ord
+
   lteR ( x, y, _ ) = ( mempty, mempty, liftA2 (<=) x y )
 
-instance (Bounded x, Enum x, Hashable x, Ord x)
-    => OrdR (Intersect x) (Intersect Bool) where
+class (Ord x, Intersectable x) => OrdIntersectable (x :: Type)
+instance (Ord x, Intersectable x) => OrdIntersectable x
+
+instance OrdR Intersect where
+  type OrdC Intersect = OrdIntersectable
+
   lteR ( x, y, z )
     = ( if | z == trueR  -> Intersect.filter (<= maximum y) x
            | z == falseR -> Intersect.filter ( > minimum y) x

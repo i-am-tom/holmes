@@ -9,13 +9,13 @@ import Data.Holmes (BooleanR (..))
 import Hedgehog
 import qualified Hedgehog.Gen as Gen
 
-bool :: BooleanR x => Gen x
+bool :: BooleanR f => Gen (f Bool)
 bool = Gen.element [ trueR, falseR ]
 
-booleanR_andR :: forall x. (BooleanR x, Eq x, Show x) => Property
+booleanR_andR :: forall f. (BooleanR f, Eq (f Bool), Show (f Bool)) => Property
 booleanR_andR = property do
-  (a :: x) <- forAll bool
-  (b :: x) <- forAll bool
+  a :: f Bool <- forAll bool
+  b :: f Bool <- forAll bool
 
   let ( _, _, c ) = andR ( a, b, mempty )
   annotateShow c
@@ -28,10 +28,10 @@ booleanR_andR = property do
   annotateShow b'
   b' <> b === b
 
-booleanR_deMorgan_and :: forall x. (BooleanR x, Eq x, Show x) => Property
+booleanR_deMorgan_and :: forall f. (BooleanR f, Eq (f Bool), Show (f Bool)) => Property
 booleanR_deMorgan_and = property do
-  (a :: x) <- forAll bool
-  (b :: x) <- forAll bool
+  a :: f Bool <- forAll bool
+  b :: f Bool <- forAll bool
 
   let ( _, _, c ) = andR ( a, b, mempty )
       ( _, a' ) = notR ( a, mempty )
@@ -41,10 +41,10 @@ booleanR_deMorgan_and = property do
 
   c === d
 
-booleanR_deMorgan_or :: forall x. (BooleanR x, Eq x, Show x) => Property
+booleanR_deMorgan_or :: forall f. (BooleanR f, Eq (f Bool), Show (f Bool)) => Property
 booleanR_deMorgan_or = property do
-  (a :: x) <- forAll bool
-  (b :: x) <- forAll bool
+  a :: f Bool <- forAll bool
+  b :: f Bool <- forAll bool
 
   let ( _, _, c ) = orR ( a, b, mempty )
       ( _, a' ) = notR ( a, mempty )
@@ -54,10 +54,10 @@ booleanR_deMorgan_or = property do
 
   c === d
 
-booleanR_orR :: forall x. (BooleanR x, Eq x, Show x) => Property
+booleanR_orR :: forall f. (BooleanR f, Eq (f Bool), Show (f Bool)) => Property
 booleanR_orR = property do
-  (a :: x) <- forAll bool
-  (b :: x) <- forAll bool
+  a :: f Bool <- forAll bool
+  b :: f Bool <- forAll bool
 
   let ( _, _, c ) = orR ( a, b, mempty )
   annotateShow c
@@ -70,9 +70,9 @@ booleanR_orR = property do
   annotateShow b'
   b' <> b === b
 
-booleanR_notR :: forall x. (BooleanR x, Eq x, Show x) => Property
+booleanR_notR :: forall f. (BooleanR f, Eq (f Bool), Show (f Bool)) => Property
 booleanR_notR = property do
-  (a :: x) <- forAll bool
+  a :: f Bool <- forAll bool
 
   let ( _, b ) = notR ( a, mempty )
   annotateShow b

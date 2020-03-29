@@ -8,7 +8,16 @@ module Test.Data.JoinSemilattice.Class.Ord where
 import Data.Holmes (BooleanR (..), OrdR (..))
 import Hedgehog
 
-ordR_lteR :: (OrdR x b, Show b, Eq x, Show x) => Gen x -> Property
+ordR_lteR
+  :: ( OrdR f
+     , OrdC f x
+     , Eq (f x)
+     , Eq (f Bool)
+     , Show (f x)
+     , Show (f Bool)
+     )
+  => Gen (f x)
+  -> Property
 ordR_lteR gen = property do
   a <- forAll gen
   b <- forAll gen
@@ -24,7 +33,15 @@ ordR_lteR gen = property do
   annotateShow b'
   b' <> b === b
 
-ordR_symmetry :: (OrdR x b, Eq b, Eq x, Show x) => Gen x -> Property
+ordR_symmetry
+  :: ( OrdR f
+     , OrdC f x
+     , Eq (f x)
+     , Eq (f Bool)
+     , Show (f x)
+     )
+  => Gen (f x)
+  -> Property
 ordR_symmetry gen = property do
   a <- forAll gen
   b <- forAll gen
