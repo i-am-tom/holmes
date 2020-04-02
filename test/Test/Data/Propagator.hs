@@ -8,6 +8,7 @@ import qualified Data.Propagator as Prop
 import Hedgehog
 import qualified Hedgehog.Gen as Gen
 import qualified Hedgehog.Range as Range
+import Data.List (nub)
 import Prelude hiding (read)
 import Test.Control.Monad.Cell.Class (Lestrade, read, scotlandYardSays)
 
@@ -110,6 +111,45 @@ hprop_ordR_simple = property do
       y' = Prop.lift y
 
       program :: Lestrade h (Defined Bool)
-      program = Prop.down (Prop.lift x .<= Prop.lift y) >>= read
+      program = Prop.down (x' .<= y') >>= read
 
   scotlandYardSays program === Just (Exactly (x <= y))
+
+hprop_choice_unique_choices :: Property
+hprop_choice_unique_choices = property do
+  n <- forAll $ Gen.int (Range.linear 0 6)
+  k <- forAll $ Gen.int (Range.linear 0 n)
+
+  let choices = Prop.choose n k
+
+  nub choices === choices
+
+hprop_choice_correct_number_of_choices :: Property
+hprop_choice_correct_number_of_choices = property do
+  n <- forAll $ Gen.int (Range.linear 0 6)
+  k <- forAll $ Gen.int (Range.linear 0 n)
+
+  let choices = Prop.choose n k
+      factorial 0 = 1
+      factorial n = n * factorial (pred n)
+
+  length choices === factorial n `div` (factorial k * factorial (n-k))
+
+hprop_exactly_simple :: Property
+hprop_exactly_simple = property do
+  xs <- forAll (Gen.list (Range.linear 0 10) (Gen.int (Range.linear 0 10)))
+  k  <- forAll (Gen.int (Range.linear 0 (length xs)))
+  x  <- forAll (Gen.int (Range.linear 0 10))
+
+  let x' :: MonadCell m => Prop m (Defined Int)
+      x' = Prop.lift x
+      
+      xs' :: MonadCell m => [Prop m (Defined Int)]
+      xs' = map Prop.lift xs
+
+      program :: Lestrade h (Defined Bool)
+      program = Prop.down (Prop.exactly k (.== x') xs') >>= read
+
+      expected = length (filter (==x) xs) == k
+
+  scotlandYardSays program === Just (Exactly expected)
