@@ -129,7 +129,7 @@ satisfying
   => Config Holmes (f x)
   -> (forall m. MonadCell m => [ Prop m (f x) ] -> Prop m (f Bool))
   -> IO (Maybe [ f x ])
-satisfying (coerce -> config :: Config (MoriarT IO) x) f
+satisfying (coerce -> config :: Config (MoriarT IO) (f x)) f
   = MoriarT.runOne (MoriarT.solve config f)
 
 -- | Shuffle the refinements in a configuration. If we make a configuration
@@ -157,5 +157,5 @@ whenever
   => Config Holmes (f x)
   -> (forall m. MonadCell m => [ Prop m (f x) ] -> Prop m (f Bool))
   -> IO [[ f x ]]
-whenever (coerce -> config :: Config (MoriarT IO) x) f
+whenever (coerce -> config :: Config (MoriarT IO) (f x)) f
   = MoriarT.runAll (MoriarT.solve config f)
