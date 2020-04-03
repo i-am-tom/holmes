@@ -30,7 +30,7 @@ module Data.Propagator
 
   , (.&&), all', allWithIndex', and'
   , (.||), any', anyWithIndex', or'
-  , false, not', true
+  , false, not', true, exactly, choose
 
   , (.==), (./=), distinct
 
@@ -206,6 +206,28 @@ any' f = or' . map f
 -- /For example, cells "surrounding" the current cell in a conceptual "board"./
 anyWithIndex' :: (BooleanR f, MonadCell m) => (Int -> x -> Prop m (f Bool)) -> [ x ] -> Prop m (f Bool)
 anyWithIndex' f = any' (uncurry f) . zip [0 ..]
+
+-- | Asserts that exactly n of the elements must match the given predicate.
+exactly :: (BooleanR f, MonadCell m) => Int -> (x -> Prop m (f Bool)) -> [x] -> Prop m (f Bool)
+exactly n f xs = 
+    let l = length xs
+        choices = choose l n
+        applyChoice picks = zipWith (\pick x -> if pick then f x else not' (f x)) picks xs
+    in or' (map (and'.applyChoice) choices)
+
+-- | Utility function that calculates all possible ways to pick k values out of n.
+-- It returns a list of picks, where each pick contains a boolean indicating whether
+-- that value was picked
+choose :: Int -> Int -> [[Bool]]
+choose n k = 
+  if k<0 || k>n
+    then []
+    else
+      if n==0
+        then [[]]
+        else
+          map (False:) (choose (pred n) k) ++
+          map (True:)  (choose (pred n) (pred k))
 
 -- | Different parameter types come with different representations for 'Bool'.
 -- This value is a propagator network with a focus on a polymorphic "falsey"
