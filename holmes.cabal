@@ -109,7 +109,7 @@ test-suite test
                , Test.Data.JoinSemilattice.Defined
                , Test.Data.JoinSemilattice.Intersect
                , Test.Data.Propagator
-               , Test.Regression.Issue17
+               , Test.Regression.Issue7
                , Test.Util.Laws
 
   ghc-options: -Wall -Wextra -threaded
