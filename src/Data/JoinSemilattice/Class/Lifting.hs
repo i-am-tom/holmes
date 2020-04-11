@@ -11,9 +11,8 @@ License     : MIT
 -}
 module Data.JoinSemilattice.Class.Lifting where
 
-import Data.Hashable (Hashable)
 import Data.JoinSemilattice.Defined (Defined (..))
-import Data.JoinSemilattice.Intersect (Intersect)
+import Data.JoinSemilattice.Intersect (Intersect, Intersectable)
 import qualified Data.JoinSemilattice.Intersect as Intersect
 import Data.Kind (Constraint, Type)
 
@@ -21,11 +20,8 @@ import Data.Kind (Constraint, Type)
 class Lifting (f :: Type -> Type) (c :: Type -> Constraint) | f -> c where
   lift' :: c x => x -> f x
 
-class Trivial (x :: Type)
-instance Trivial x
-
-instance Lifting Defined Trivial where
+instance Lifting Defined Eq where
   lift' = Exactly
 
-instance Lifting Intersect Hashable where
+instance Lifting Intersect Intersectable where
   lift' = Intersect.singleton

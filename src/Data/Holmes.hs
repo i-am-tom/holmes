@@ -36,6 +36,7 @@ module Data.Holmes
   , FlatMapping (..)
   , FractionalR (..)
   , IntegralR (..)
+  , Lifting (..)
   , Mapping (..)
   , OrdR (..), ltR, gtR, gteR
   , SumR (..), negateR, subR
@@ -48,7 +49,8 @@ module Data.Holmes
   , Intersect (..)
   , using
 
-  , Prop
+  , Prop, Prop.up, Prop.down, Prop.lift, Prop.over
+  , Prop.unary, Prop.binary
 
   , (Prop..$), (Prop..>>=), Prop.zipWith'
 
@@ -79,6 +81,7 @@ import Data.JoinSemilattice.Class.Eq (EqR (..), neR)
 import Data.JoinSemilattice.Class.FlatMapping (FlatMapping (..))
 import Data.JoinSemilattice.Class.Fractional (FractionalR (..))
 import Data.JoinSemilattice.Class.Integral (IntegralR (..))
+import Data.JoinSemilattice.Class.Lifting (Lifting (..))
 import Data.JoinSemilattice.Class.Mapping (Mapping (..))
 import Data.JoinSemilattice.Class.Merge (Merge (..), Result (..))
 import Data.JoinSemilattice.Class.Ord (OrdR (..), ltR, gtR, gteR)

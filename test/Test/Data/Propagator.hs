@@ -131,7 +131,7 @@ hprop_choice_correct_number_of_choices = property do
 
   let choices = Prop.choose n k
       factorial 0 = 1
-      factorial n = n * factorial (pred n)
+      factorial m = m * factorial (pred m)
 
   length choices === factorial n `div` (factorial k * factorial (n-k))
 

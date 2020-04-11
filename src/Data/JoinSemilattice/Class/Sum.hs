@@ -1,5 +1,6 @@
 {-# LANGUAGE DefaultSignatures #-}
 {-# LANGUAGE KindSignatures #-}
+{-# LANGUAGE MonoLocalBinds #-}
 
 {-|
 Module      : Data.JoinSemilattice.Class.Sum
@@ -9,10 +10,9 @@ License     : MIT
 -}
 module Data.JoinSemilattice.Class.Sum where
 
-import Data.Hashable (Hashable)
 import Data.JoinSemilattice.Class.Merge (Merge)
 import Data.JoinSemilattice.Defined (Defined (..))
-import Data.JoinSemilattice.Intersect (Intersect)
+import Data.JoinSemilattice.Intersect (Intersect, Intersectable)
 import Data.Kind (Type)
 
 -- | A relationship between two values and their sum.
@@ -31,4 +31,4 @@ negateR :: (Num x, SumR x) => ( x, x ) -> ( x, x )
 negateR ( x, y ) = let ( x', y', _ ) = addR ( x, y, 0 ) in ( x', y' )
 
 instance (Eq x, Num x) => SumR (Defined x)
-instance (Bounded x, Enum x, Ord x, Hashable x, Num x) => SumR (Intersect x)
+instance (Intersectable x, Num x) => SumR (Intersect x)

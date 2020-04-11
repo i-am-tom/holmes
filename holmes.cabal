@@ -11,7 +11,7 @@ maintainer:         i.am.tom.harding@gmail.com
 name:               holmes
 description:        A reference library for constraint-solving with propagators and CDCL.
 synopsis:           Tools and combinators for solving constraint problems.
-version:            0.3.0.0
+version:            0.3.1.0
 
 library
   exposed-modules: Control.Monad.Cell.Class
@@ -109,6 +109,7 @@ test-suite test
                , Test.Data.JoinSemilattice.Defined
                , Test.Data.JoinSemilattice.Intersect
                , Test.Data.Propagator
+               , Test.Regression.Issue17
                , Test.Util.Laws
 
   ghc-options: -Wall -Wextra -threaded
