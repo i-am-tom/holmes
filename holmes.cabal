@@ -71,6 +71,7 @@ test-suite examples
                , tasty-hspec
 
   other-modules: Futoshiki
+               , Issue14
                , WaveFunctionCollapse
 
   ghc-options: -Wall -Wextra -threaded
