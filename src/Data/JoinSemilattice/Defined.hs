@@ -93,10 +93,12 @@ instance Fractional x => Fractional (Defined x) where
   fromRational = pure . fromRational
   recip        = fmap recip
 
-instance Input (Defined content) where
+instance Eq content => Input (Defined content) where
   type Raw (Defined content) = content
 
   from count options = Config (replicate count Unknown) do
     pure . \case
       Unknown -> map Exactly options
-      decided -> [ decided ]
+      Exactly a | a `elem` options -> [Exactly a]
+                | otherwise -> [Conflict]
+      Conflict -> [Conflict]
