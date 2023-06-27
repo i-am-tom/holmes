@@ -150,7 +150,7 @@ instance PrimMonad m => MonadCell (MoriarT m) where
         MutVar.writeMutVar mutVar (provenance', update, callbacks) *> callbacks
           <|> MutVar.writeMutVar mutVar before *> empty
 
-      Failure   -> Reader.local (<> context) discard
+      Failure   -> Reader.local (const provenance') discard
       Unchanged -> pure ()
 
 -- | Unsafely read from a cell. This operation is unsafe because it doesn't
