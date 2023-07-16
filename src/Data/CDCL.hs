@@ -116,8 +116,8 @@ implies (Group group) candidate = any (`subsumes` candidate) group
 -- __subset__ of the switches in @y@. In other words, the @x@ 'Rule' will match
 -- /everything/ that @y@ will.
 subsumes :: Rule -> Rule -> Bool
-subsumes (Rule these) (Rule those) = HashMap.foldrWithKey check True these
-  where check key value acc = HashMap.lookup key those == Just value && acc
+subsumes (Rule x) (Rule y) = HashMap.foldrWithKey check True x
+  where check key v acc = HashMap.lookup key y == Just v && acc
 
 -- | Add a new 'Rule' to a 'Group'. Attempt to calculate any 'refinements' of
 -- the rule, and generalise the 'Group' as far as possible.
@@ -126,11 +126,17 @@ resolve rule group | group `implies` rule = group
 resolve rule@(Rule config) group@(Group rules)
   = case refinements rule group of
       [] -> Group case HashMap.toList config of
-        [ (key, value) ] -> do -- Unit propagation
+        [ (key, x) ] -> do -- Unit propagation
           HashSet.insert rule $ rules & HashSet.map \(Rule current) -> do
-            if HashMap.lookup key current /= Just value
-              then Rule (HashMap.delete key current)
-              else rule
+            Rule $ case HashMap.lookup key current of
+              -- The unit does not appear in the current rule : keep the current rule.
+              Nothing -> current
+                     -- The unit subsumes the current rule : delete the current rule.
+              Just y | y == x -> config
+                     -- If the unit matches, the current rule is useless for that group to match.
+                     -- Otherwise the unit does not match, but then the current rule
+                     -- does not need to recheck that : delete the unit from the current rule.
+                     | otherwise {- y == not x -} -> HashMap.delete key current
 
         _ -> rules & HashSet.filter (not . (rule `subsumes`))
                    & HashSet.insert rule
