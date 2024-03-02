@@ -38,10 +38,10 @@ library
                , Data.JoinSemilattice.Class.Zipping
                , Data.CDCL
 
-  build-depends: base >= 4.12 && < 4.16
+  build-depends: base >= 4.12 && < 4.19
                , containers >= 0.6 && < 0.7
-               , hashable >= 1.3 && < 1.4
-               , hedgehog >= 1.0 && < 1.1
+               , hashable >= 1.3 && < 1.5
+               , hedgehog >= 1.0 && < 1.5
                , logict >= 0.7 && < 0.8
                , mtl >= 2.2 && < 2.3
                , primitive >= 0.7 && < 0.8
@@ -60,12 +60,12 @@ test-suite examples
   main-is:  Main.hs
 
   build-depends: base
-               , hashable >= 1.3 && < 1.4
+               , hashable >= 1.3 && < 1.5
                , holmes
-               , hspec >= 2.7 && < 2.9
+               , hspec >= 2.7 && < 2.12
                , split >= 0.2 && < 0.3
                , unordered-containers >= 0.2 && < 0.3
-               , relude >= 0.6 && < 1.1
+               , relude >= 0.6 && < 1.3
                , tasty >= 1.2 && < 1.5
                , tasty-discover
                , tasty-hspec
@@ -88,9 +88,10 @@ test-suite test
 
   build-depends: base
                , containers >= 0.6 && < 0.7
-               , hashable >= 1.3 && < 1.4
-               , hedgehog >= 1.0 && < 1.1
+               , hashable >= 1.3 && < 1.5
+               , hedgehog >= 1.0 && < 1.5
                , holmes
+               , hspec 
                , primitive >= 0.7 && < 0.8
                , transformers >= 0.5 && < 0.6
                , tasty >= 1.2 && < 1.5
@@ -124,9 +125,9 @@ test-suite test
 
 test-suite readme
   build-depends: base
-               , hashable >= 1.3 && < 1.4
+               , hashable >= 1.3 && < 1.5
                , holmes
-               , hspec >= 2.7 && < 2.9
+               , hspec >= 2.7 && < 2.12
   main-is:             README.lhs
   type:                exitcode-stdio-1.0
   default-language:    Haskell2010
