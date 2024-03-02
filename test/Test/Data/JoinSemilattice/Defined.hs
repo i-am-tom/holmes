@@ -15,7 +15,7 @@ import qualified Test.Data.JoinSemilattice.Class.Fractional as FractionalR
 import qualified Test.Data.JoinSemilattice.Class.Integral as IntegralR
 import qualified Test.Data.JoinSemilattice.Class.Ord as OrdR
 import qualified Test.Data.JoinSemilattice.Class.Sum as SumR
-import Test.Tasty.Hspec (Spec, it, shouldBe)
+import Test.Hspec (Spec, it, shouldBe)
 import qualified Test.Util.Laws as Laws
 
 defined_double :: Gen (Defined Double)

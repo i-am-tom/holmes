@@ -14,7 +14,7 @@ import Data.Function ((&))
 import Data.Hashable (Hashable)
 import Data.Holmes
 import GHC.Generics (Generic)
-import Test.Tasty.Hspec (Spec, describe, it, shouldBe)
+import Test.Hspec (Spec, describe, it, shouldBe)
 
 -------------------------------------------------------------------------------
 -- #7: stack overflow / infinite loop when solving with Intersect instead of
